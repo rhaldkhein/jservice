@@ -10,18 +10,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rhaldkhein/centress.git"
+    "url": "git+https://github.com/rhaldkhein/jservice.git"
   },
   "author": "RhaldKhein",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rhaldkhein/centress/issues"
+    "url": "https://github.com/rhaldkhein/jservice/issues"
   },
-  "homepage": "https://github.com/rhaldkhein/centress#readme",
+  "homepage": "https://github.com/rhaldkhein/jservice#readme",
   "keywords": [
-    "express",
     "modular",
-    "monolith",
+    "ioc",
+    "di",
     "framework"
   ],
   "dependencies": {
@@ -41,6 +41,6 @@
   },
   "files": [
     "src",
-    "lib"
+    "build"
   ]
 }

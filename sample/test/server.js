@@ -7,7 +7,7 @@
 //   port: 3000
 // }
 
-function Server() {
+const Server = module.exports = function () {
   console.log('A');
   // this._configService = provider.getRequiredService('@config')
   // config = this._config = _defaultsDeep(config, configDefault)
@@ -65,15 +65,13 @@ Server.prototype.listen = function () {
 
 Server.service = '@server'
 
-Server.start = function (provider) {
-  console.log('C');
-  const serverService = provider.getService('@server')
-  return serverService.listen()
-}
+// Server.start = function (provider) {
+//   console.log('C');
+//   const serverService = provider.getService('@server')
+//   return serverService.listen()
+// }
 
-Server.ready = function (provider) {
-  // body
-  console.log('D');
-}
-
-module.exports = Server
+// Server.ready = function (provider) {
+//   // body
+//   console.log('D');
+// }
