@@ -1,0 +1,46 @@
+{
+  "name": "jservice",
+  "version": "0.1.0",
+  "description": "A javascript DI container at its smallest form",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "babel src --out-dir build",
+    "dev": "babel src --watch --out-dir build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhaldkhein/centress.git"
+  },
+  "author": "RhaldKhein",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rhaldkhein/centress/issues"
+  },
+  "homepage": "https://github.com/rhaldkhein/centress#readme",
+  "keywords": [
+    "express",
+    "modular",
+    "monolith",
+    "framework"
+  ],
+  "dependencies": {
+    "lodash.defaultsdeep": "^4.6.0",
+    "lodash.get": "^4.4.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.4.5",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "express": "^4.17.1",
+    "nodemon": "^1.19.1"
+  },
+  "files": [
+    "src",
+    "lib"
+  ]
+}
