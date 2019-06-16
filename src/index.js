@@ -13,7 +13,7 @@ class Builder {
   }
 
   build(registry) {
-    this.collection.addService(this, '$core')
+    this.collection.addSingleton(this, '$core')
     if (typeof registry === 'function')
       registry(this.collection)
     return this

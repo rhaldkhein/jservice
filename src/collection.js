@@ -2,9 +2,9 @@ export default class ServiceCollection {
 
   services = {}
 
-  addScopeService(service, name) {
+  addScoped(service, name) {
     if (typeof service !== 'function') {
-      this.addService(service, name)
+      this.addSingleton(service, name)
       return
     }
     name = (name || service.service).toLowerCase()
@@ -14,18 +14,18 @@ export default class ServiceCollection {
     this.services[name] = service
   }
 
-  addService(service, name) {
+  addSingleton(service, name) {
     if (typeof service !== 'function') {
       if (!name) throw new Error('Concrete service must have a name')
-      const defaultService = () => service
-      defaultService.isConcrete = true
-      defaultService.isSingleton = true
-      defaultService.service = name
-      this.addScopeService(defaultService, name)
+      const WrapperService = () => service
+      WrapperService.isConcrete = true
+      WrapperService.isSingleton = true
+      WrapperService.service = name
+      this.addScoped(WrapperService, name)
       return
     }
     service.isSingleton = true
-    this.addScopeService(service, name)
+    this.addScoped(service, name)
   }
 
 }

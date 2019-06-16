@@ -36,13 +36,13 @@ const Parser = require('./services/parser')
 module.exports = function(services) {
   
   // Add your singleton services
-  services.addService(Routing)
-  services.addService(Database)
-  services.addService(Server)
-  services.addService(User)
+  services.addSingleton(Routing)
+  services.addSingleton(Database)
+  services.addSingleton(Server)
+  services.addSingleton(User)
 
   // Add your spoced service
-  services.addScopeService(Parser)
+  services.addScoped(Parser)
 }
 ```
 
@@ -101,17 +101,23 @@ Routing service `./services/routing.js`. You will notice that we will not import
 
 ```javascript
 export default class Routing {
+  static service = 'routing'
   constructor(provider) {
+    // Getting a required service, and will throw error if not registered
+    this.serverService = provider.getRequiredService('server')
+    // Getting non-required service, will not throw error and returns `null`
     this.userService = provider.getService('user')
-    this.serverService = provider.getService('server')
   }
   buildRoutes() {
     const { router } = this.serverService
     router.post('/register', (req, res) => {
-      this.userService.registerUser(req.body)
+      // Since user service is not required, it might be `null`, so we need to check
+      if (this.userService)
+        this.userService.registerUser(req.body)
     })
     router.post('/delete', (req, res) => {
-      this.userService.deleteUser(req.body.id)
+      if (this.userService)
+        this.userService.deleteUser(req.body.id)
     })
   }
 }
