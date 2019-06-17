@@ -44,5 +44,9 @@ class Builder {
 
 }
 
-export { Builder }
 export default Builder
+export {
+  Builder,
+  ServiceCollection,
+  ServiceProvider
+}
