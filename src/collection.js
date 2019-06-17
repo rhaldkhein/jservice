@@ -2,7 +2,7 @@ export default class ServiceCollection {
 
   services = {}
 
-  addScoped(service, name) {
+  addTransient(service, name) {
     if (typeof service !== 'function') {
       this.addSingleton(service, name)
       return
@@ -21,11 +21,11 @@ export default class ServiceCollection {
       WrapperService.isConcrete = true
       WrapperService.isSingleton = true
       WrapperService.service = name
-      this.addScoped(WrapperService, name)
+      this.addTransient(WrapperService, name)
       return
     }
     service.isSingleton = true
-    this.addScoped(service, name)
+    this.addTransient(service, name)
   }
 
 }

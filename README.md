@@ -12,8 +12,8 @@ npm install jservice
 Create entry point `index.js` to build and start the application.
 
 ```javascript
-const { Builder } = require('jservice')
-const registry = require('./registry')
+import Builder from 'jservice'
+import registry from './registry'
 
 // Create a container context
 const builder = new Builder()
@@ -26,11 +26,11 @@ Create a registry file `registry.js` to add your all services.
 
 ```javascript
 // Import your services
-const Routing = require('./services/routing')
-const Database = require('./services/database')
-const Server = require('./services/server')
-const User = require('./services/user')
-const Parser = require('./services/parser')
+import Routing from './services/routing'
+import Database from './services/database'
+import Server from './services/server'
+import User from './services/user'
+import Parser from './services/parser'
 
 // Export a function 
 module.exports = function(services) {
@@ -42,13 +42,13 @@ module.exports = function(services) {
   services.addSingleton(User)
 
   // Add your spoced service
-  services.addScoped(Parser)
+  services.addTransient(Parser)
 }
 ```
 
 #### Creating your services
 
-Server service `./services/server.js`. Assume you're using `Express` and `ES6` through `Babel`.
+Server service `./services/server.js`.
 
 ```javascript
 const express = require('express')
