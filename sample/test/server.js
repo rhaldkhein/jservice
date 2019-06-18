@@ -63,7 +63,7 @@ Server.prototype.listen = function () {
   //   .then(listenServer)
 }
 
-Server.service = '@server'
+Server.service = 'server'
 
 // Server.start = function (provider) {
 //   console.log('C');

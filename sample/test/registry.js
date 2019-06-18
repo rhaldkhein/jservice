@@ -2,8 +2,8 @@ const Server = require('./server')
 
 module.exports = services => {
 
-  services.addService({ foo: 'bar' }, '@foo')
+  services.addSingleton({ foo: 'bar' }, '@foo')
 
-  services.addService(Server)
+  services.addSingleton(Server)
 
 }

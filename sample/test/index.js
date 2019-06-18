@@ -6,3 +6,6 @@ const builder = new Builder()
 builder
   .build(registry)
   .start()
+  .then(provider => {
+    provider.getRequired('server')
+  })

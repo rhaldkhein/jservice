@@ -7,31 +7,40 @@ export default class ServiceProvider {
     this._collection = collection
   }
 
+  get(name, options) {
+    return this.getService(name, options)
+  }
+
   getService(name, options) {
-    let Service = this._collection.services[name.toLowerCase()]
-    if (!Service) return null
-    return this.createService(Service, options)
+    let index = this._collection.names[name.toLowerCase()]
+    if (index === undefined) return null
+    return this.createService(index, options)
+  }
+
+  getRequired(name, options) {
+    return this.getRequiredService(name, options)
   }
 
   getRequiredService(name, options) {
-    let Service = this._collection.services[name.toLowerCase()]
-    if (!Service)
+    let index = this._collection.names[name.toLowerCase()]
+    if (index === undefined)
       throw new Error(`Missing required service "${name}"`)
-    return this.createService(Service, options)
+    return this.createService(index, options)
   }
 
-  createService(Service, options) {
-    let service, name = Service.service
+  createService(index, options) {
+    let Service = this._collection.services[index]
+    let instance, name = Service.service
     if (Service.isSingleton) {
-      service = this._instances[name]
-      if (!service) {
-        service = Service.isConcrete ? Service() : new Service(this, options)
-        this._instances[name] = service
+      instance = this._instances[name]
+      if (!instance) {
+        instance = Service.isConcrete ? Service() : new Service(this, options)
+        this._instances[name] = instance
       }
     } else {
-      service = new Service(this, options)
+      instance = new Service(this, options)
     }
-    return service
+    return instance
   }
 
 }

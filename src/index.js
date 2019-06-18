@@ -20,25 +20,21 @@ class Builder {
   }
 
   start() {
-    return Promise.all(this._invoke('start'))
+    return Promise.all(this.invoke('start'))
       .then(() => {
         this.isReady = true
-        this._invoke('ready')
+        this.invoke('ready')
       })
       .then(() => this.provider)
   }
 
-  _invoke(event) {
+  invoke(event) {
     let results = []
     const { services } = this.collection
-    for (const key in services) {
-      if (!services.hasOwnProperty(key)) continue
-      const service = services[key]
+    services.forEach(service => {
       const method = service[event]
-      if (method) {
-        results.push(method(this.provider))
-      }
-    }
+      if (method) results.push(method(this.provider))
+    });
     return results
   }
 
