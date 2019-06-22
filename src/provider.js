@@ -32,7 +32,7 @@ export default class ServiceProvider {
     return this.createService(index)
   }
 
-  createService(index, options) {
+  createService(index) {
     let Service = this._collection.services[index]
     let instance, name = Service.service
 
@@ -45,24 +45,24 @@ export default class ServiceProvider {
     if (Service.type <= this._types.SINGLETON) {
       if (this._parent) {
         // Use parent instead
-        instance = this._parent.createService(index, options)
+        instance = this._parent.createService(index)
       } else {
         instance = this._instances[name]
         if (!instance) {
           instance = Service.type === this._types.CONCRETE ?
             Service() :
-            new Service(this, options)
+            new Service(this, Service.config && Service.config(this))
           this._instances[name] = instance
         }
       }
     } else if (Service.type === this._types.SCOPED) {
       instance = this._instances[name]
       if (!instance) {
-        instance = new Service(this, options)
+        instance = new Service(this, Service.config && Service.config(this))
         this._instances[name] = instance
       }
     } else {
-      instance = new Service(this, options)
+      instance = new Service(this, Service.config && Service.config(this))
     }
     return instance
   }
