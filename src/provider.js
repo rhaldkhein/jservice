@@ -40,7 +40,7 @@ export default class ServiceProvider {
     // If `this._parent` exists, that means that this provider is a scoped.
     // Otherwise, singleton.
     if (!this._parent && Service.type > this._types.SINGLETON)
-      throw new Error('Singletons should not get scoped or transcient services')
+      throw new Error('Singletons should not get scoped or transient services')
 
     if (Service.type <= this._types.SINGLETON) {
       if (this._parent) {
