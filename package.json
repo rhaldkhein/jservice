@@ -6,9 +6,9 @@
   "scripts": {
     "build": "rm -rf build && babel src --out-dir build",
     "watch": "rm -rf build && babel src --watch --out-dir build",
-    "sample": "DEBUG=jservice:* nodemon sample/basic",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "publish": "npm run build && npm publish"
+    "start": "DEBUG=jservice:* nodemon sample/basic",
+    "publish": "npm run build"
   },
   "repository": {
     "type": "git",
