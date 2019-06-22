@@ -28,13 +28,17 @@ class Builder {
       .then(() => this.provider)
   }
 
+  createScopedProvider() {
+    return new ServiceProvider(this.collection, this.provider)
+  }
+
   invoke(event) {
     let results = []
     const { services } = this.collection
     services.forEach(service => {
       const method = service[event]
       if (method) results.push(method(this.provider))
-    });
+    })
     return results
   }
 

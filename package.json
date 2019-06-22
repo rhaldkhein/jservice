@@ -4,10 +4,11 @@
   "description": "A javascript DI container at its smallest form",
   "main": "build/index.js",
   "scripts": {
-    "build": "babel src --out-dir build",
-    "dev": "babel src --watch --out-dir build",
-    "sample": "DEBUG=jservice:* nodemon sample/test",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -rf build && babel src --out-dir build",
+    "watch": "rm -rf build && babel src --watch --out-dir build",
+    "sample": "DEBUG=jservice:* nodemon sample/basic",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",
@@ -25,10 +26,7 @@
     "di",
     "framework"
   ],
-  "dependencies": {
-    "lodash.defaultsdeep": "^4.6.0",
-    "lodash.get": "^4.4.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
@@ -38,7 +36,8 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "express": "^4.17.1",
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.1",
+    "shortid": "^2.2.14"
   },
   "files": [
     "src",
