@@ -1,5 +1,8 @@
 # JService
-A javascript DI container at its smallest form. Inspired by .Net Core.
+
+A javascript DI container at its smallest form. Inspired by .Net Core with dependency scoping. Singleton, Scoped and Transient.
+
+To see the scoped service in action, which binds to request object in Express. Check out [Excore](https://github.com/rhaldkhein/excore).
 
 ### Install
 
@@ -12,113 +15,112 @@ npm install jservice
 Create entry point `index.js` to build and start the application.
 
 ```javascript
-import Builder from 'jservice'
-import registry from './registry'
+const { Builder } = require('jservice')
+const registry = require('./registry')
+const runTest = require('./test')
 
-// Create a container context
+// Create a container
 const builder = new Builder()
 
 // Build services and start
-builder.build(registry).start()
+builder
+  .build(registry)
+  .start()
+  .then(provider => runTest(provider, builder))
+
 ```
 
-Create a registry file `registry.js` to add your all services.
+Add all your services in `registry.js` file.
 
 ```javascript
-// Import your services
-import Routing from './services/routing'
-import Database from './services/database'
-import Server from './services/server'
-import User from './services/user'
-import Parser from './services/parser'
+// Import services
+const Server = require('./server')
+const SingletonService = require('./services/singleton')
+const ScopedService = require('./services/scoped')
+const Transient = require('./services/transient')
 
-// Export a function 
-module.exports = function(services) {
-  
-  // Add your singleton services
-  services.addSingleton(Routing)
-  services.addSingleton(Database)
+module.exports = services => {
+
+  // Add services
+  services.addSingleton(SingletonService)
+  services.addScoped(ScopedService)
+  services.addTransient(Transient)
+
+  services.addSingleton({ foo: 'bar' }, 'foo')
   services.addSingleton(Server)
-  services.addSingleton(User)
 
-  // Add your spoced service
-  services.addTransient(Parser)
 }
+
 ```
 
-#### Creating your services
-
-Server service `./services/server.js`.
+To test the service, create `test.js` and run it after the builder started.
 
 ```javascript
-const express = require('express')
-const http = require('http')
+module.exports = (provider, builder) => {
 
-export default class Server {
-  // Required static property
-  static service = 'server'
-  // Create express server
-  constructor(provider) {
-    // Inject the routing server
-    this.routingService = provider.getService('routing')
-    // Create server
-    this.app = express()
-    this.router = express.Router()
-    this.server = http.Server(this.app)
-  }
-  // Start server and listen on port
-  listen() {
-    const setupRouting = () => {
-      this.routingService.buildRoutes()
-    }
-    const listenServer = () => {
-      return new Promise((resolve, reject) => {
-        const port = 3000
-        // Start the server
-        this.server.listen(port, err => {
-          if (err) return reject(err)
-          resolve()
-          console.log(`Server is listening on port ${port}`);
-        })
-      })
-    }
-    return Promise.resolve()
-      .then(setupRouting)
-      .then(listenServer)
-  }
-  // This is an optional syntax sugar to hook on builder's start event.
-  // You can start server in `builder.build(registry).start()` instead.
-  static start(provider) {
-    // Since this is static, we don't have access to `this` but we can
-    // use the provider to get the server service.
-    const serverService = provider.getService('server')
-    serverService.listen()
-  }
+  console.log('MAIN PROVIDER')
+  console.log('Singleton | ', provider.getService('singleton').id)
+
+  console.log('SCOPED PROVIDER A (1st request)')
+  const scopedProviderA = builder.createScopedProvider()
+  console.log('Singleton | ', scopedProviderA.getService('singleton').id)
+  console.log('Singleton | ', scopedProviderA.getService('singleton').id)
+  console.log('Scoped    | ', scopedProviderA.getService('scoped').id)
+  console.log('Scoped    | ', scopedProviderA.getService('scoped').id)
+  console.log('Tansient  | ', scopedProviderA.getService('transient').id)
+  console.log('Tansient  | ', scopedProviderA.getService('transient').id)
+
+  console.log('SCOPED PROVIDER B (2nd request)')
+  const scopedProviderB = builder.createScopedProvider()
+  console.log('Singleton | ', scopedProviderB.getService('singleton').id)
+  console.log('Singleton | ', scopedProviderB.getService('singleton').id)
+  console.log('Scoped    | ', scopedProviderB.getService('scoped').id)
+  console.log('Scoped    | ', scopedProviderB.getService('scoped').id)
+  console.log('Tansient  | ', scopedProviderB.getService('transient').id)
+  console.log('Tansient  | ', scopedProviderB.getService('transient').id)
+
+  // This will throw error as its a global provider (singleton) that requires scoped service
+  // provider.getService('scoped')
+  // provider.getService('transient')
+
 }
 ```
 
-Routing service `./services/routing.js`. You will notice that we will not import `Express` here or create any routing object. The only job of this service is to map business logic to endpoints.
+**Output:** Notice the ids generated when getting services. Same id means the same instance.
+- Singleton services have same id across providers
+- Scoped services have same id within the provider but different on another provider
+- Transient services are always different (new instance)
 
-```javascript
-export default class Routing {
-  static service = 'routing'
-  constructor(provider) {
-    // Getting a required service, and will throw error if not registered
-    this.serverService = provider.getRequiredService('server')
-    // Getting non-required service, will not throw error and returns `null`
-    this.userService = provider.getService('user')
-  }
-  buildRoutes() {
-    const { router } = this.serverService
-    router.post('/register', (req, res) => {
-      // Since user service is not required, it might be `null`, so we need to check
-      if (this.userService)
-        this.userService.registerUser(req.body)
-    })
-    router.post('/delete', (req, res) => {
-      if (this.userService)
-        this.userService.deleteUser(req.body.id)
-    })
-  }
-}
+```sh
+GLOBAL PROVIDER
+Singleton |  plgcGPuZu
+
+SCOPED PROVIDER A (1st request)
+Singleton |  plgcGPuZu
+Singleton |  plgcGPuZu
+Scoped    |  8YG0POVDjR
+Scoped    |  8YG0POVDjR
+Tansient  |  ZAoy3AJooc
+Tansient  |  ok1MP0cYir
+
+SCOPED PROVIDER B (2nd request)
+Singleton |  plgcGPuZu
+Singleton |  plgcGPuZu
+Scoped    |  TQPz6T_Suk
+Scoped    |  TQPz6T_Suk
+Tansient  |  sPsB8hnC3U
+Tansient  |  8iz9mz8bC9
 ```
+
+You check out the sample and run it yourself.
+
+```sh
+git clone <repo>
+npm install
+npm run build
+npm run sample
+```
+
+#### License
+
+MIT
