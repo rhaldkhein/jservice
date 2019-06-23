@@ -67,8 +67,8 @@ module.exports = (provider, builder) => {
   console.log('Singleton | ', scopedProviderA.getService('singleton').id)
   console.log('Scoped    | ', scopedProviderA.getService('scoped').id)
   console.log('Scoped    | ', scopedProviderA.getService('scoped').id)
-  console.log('Tansient  | ', scopedProviderA.getService('transient').id)
-  console.log('Tansient  | ', scopedProviderA.getService('transient').id)
+  console.log('Transient | ', scopedProviderA.getService('transient').id)
+  console.log('Transient | ', scopedProviderA.getService('transient').id)
 
   console.log('SCOPED PROVIDER B (2nd request)')
   const scopedProviderB = builder.createScopedProvider()
@@ -76,10 +76,11 @@ module.exports = (provider, builder) => {
   console.log('Singleton | ', scopedProviderB.getService('singleton').id)
   console.log('Scoped    | ', scopedProviderB.getService('scoped').id)
   console.log('Scoped    | ', scopedProviderB.getService('scoped').id)
-  console.log('Tansient  | ', scopedProviderB.getService('transient').id)
-  console.log('Tansient  | ', scopedProviderB.getService('transient').id)
+  console.log('Transient | ', scopedProviderB.getService('transient').id)
+  console.log('Transient | ', scopedProviderB.getService('transient').id)
 
-  // This will throw error as its a global provider (singleton) that requires scoped service
+  // This will throw error as its a global provider (singleton) that 
+  // requires scoped service
   // provider.getService('scoped')
   // provider.getService('transient')
 
@@ -100,16 +101,16 @@ Singleton |  plgcGPuZu
 Singleton |  plgcGPuZu
 Scoped    |  8YG0POVDjR
 Scoped    |  8YG0POVDjR
-Tansient  |  ZAoy3AJooc
-Tansient  |  ok1MP0cYir
+Transient |  ZAoy3AJooc
+Transient |  ok1MP0cYir
 
 SCOPED PROVIDER B (2nd request)
 Singleton |  plgcGPuZu
 Singleton |  plgcGPuZu
 Scoped    |  TQPz6T_Suk
 Scoped    |  TQPz6T_Suk
-Tansient  |  sPsB8hnC3U
-Tansient  |  8iz9mz8bC9
+Transient |  sPsB8hnC3U
+Transient |  8iz9mz8bC9
 ```
 
 You check out the sample and run it yourself.

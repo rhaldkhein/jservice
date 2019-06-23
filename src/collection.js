@@ -17,10 +17,16 @@ export default class ServiceCollection {
 
   _push(service, name, config) {
     if (!name) throw new Error('Service must have a name')
-    if (this.names[name])
-      throw new Error(`Service "${name}" is already registered`)
-    this.names[name] = this.services.length
-    this.services.push(service)
+    const index = this.names[name]
+    if (index > -1) {
+      // Allow override of service if name starts with `@`
+      if (name[0] !== '@')
+        throw new Error(`Service "${name}" is already registered`)
+      this.services[index] = service
+    } else {
+      this.names[name] = this.services.length
+      this.services.push(service)
+    }
     service.config = config
   }
 

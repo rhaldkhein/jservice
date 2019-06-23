@@ -6,4 +6,4 @@ const Server = module.exports = function (provider) {
   // provider.getService('singleton')
 }
 
-Server.service = 'server'
+Server.service = '@server'
