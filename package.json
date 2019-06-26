@@ -1,6 +1,6 @@
 {
   "name": "jservice",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "A javascript DI container at its smallest form",
   "main": "build/index.js",
   "scripts": {
