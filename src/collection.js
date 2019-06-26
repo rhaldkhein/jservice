@@ -30,6 +30,13 @@ export default class ServiceCollection {
     service.config = config
   }
 
+  configure(name, config) {
+    const index = this.names[name]
+    if (index === undefined)
+      throw new Error(`Unable to configure unregistered service "${name}"`)
+    this.services[index].config = config
+  }
+
   add(service, name, config) {
     return this.addSingleton(service, name, config)
   }
