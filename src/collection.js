@@ -31,7 +31,7 @@ export default class ServiceCollection {
   }
 
   configure(name, config) {
-    const index = this.names[name]
+    const index = this.names[isFunction(name) ? name.service : name]
     if (index === undefined)
       throw new Error(`Unable to configure unregistered service "${name}"`)
     this.services[index].config = config
