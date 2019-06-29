@@ -124,7 +124,6 @@ You check out the sample and run it yourself.
 ```sh
 git clone <repo>
 npm install
-npm run build
 npm run sample
 ```
 

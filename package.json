@@ -8,8 +8,8 @@
     "watch": "rm -rf lib && babel src --watch --out-dir lib",
     "sample": "DEBUG=jservice:* node sample/basic",
     "start": "DEBUG=jservice:* nodemon sample/basic",
-    "prepublish": "npm run build",
-    "postuninstall": "npm run build",
+    "prepare": "npm run build",
+    "install": "npm run build",
     "test": "nyc mocha",
     "test-watch": "mocha --watch",
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
