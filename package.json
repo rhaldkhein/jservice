@@ -8,6 +8,8 @@
     "watch": "rm -rf build && babel src --watch --out-dir build",
     "sample": "DEBUG=jservice:* node sample/basic",
     "start": "DEBUG=jservice:* nodemon sample/basic",
+    "prepublish": "npm run build",
+    "postuninstall": "npm run build",
     "test": "mocha",
     "test-watch": "mocha --watch",
     "coverage": "nyc mocha",
