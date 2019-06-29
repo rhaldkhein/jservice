@@ -71,9 +71,25 @@ describe('provider', () => {
   })
 
   it('get required service', () => {
-    const provider = new Builder().provider;
+    const builder = new Builder()
+    builder.build(services => {
+      services.addSingleton(SingletonService)
+    })
+    const provider = builder.provider;
     (() => provider.getRequiredService('nothing')).should.throw(Error);
     (() => provider.getRequired('nothing')).should.throw(Error)
+    const singleton = provider.getRequiredService('singleton')
+    expect(singleton).to.be.instanceOf(SingletonService)
+  })
+
+  it('get service from parent', () => {
+    const builder = new Builder()
+    builder.build(services => {
+      services.addSingleton(SingletonService)
+    })
+    const scopedProvider = builder.createScopedProvider()
+    const singleton = scopedProvider.getService('singleton')
+    expect(singleton).to.be.instanceOf(SingletonService)
   })
 
 })

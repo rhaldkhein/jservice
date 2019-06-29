@@ -75,6 +75,20 @@ describe('collection', () => {
     expect(foo.config).to.be.a('function')
   })
 
+  it('replace service', () => {
+    const builder = new Builder()
+    function ReplacableService() { }
+    ReplacableService.service = '@replacable'
+    function NewService() { }
+    NewService.service = '@replacable'
+    builder.build(services => {
+      services.addTransient(ReplacableService, () => null)
+      services.addTransient(NewService, () => null)
+    })
+    expect(builder.collection.services.length).to.be.equal(2)
+    expect(builder.collection.services[1]).to.be.equal(NewService)
+  })
+
   it('configure services', () => {
     const builder = new Builder()
     builder.build(services => {
