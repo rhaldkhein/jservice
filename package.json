@@ -2,18 +2,17 @@
   "name": "jservice",
   "version": "0.1.12",
   "description": "A javascript DI container at its smallest form",
-  "main": "build/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "build": "rm -rf build && babel src --out-dir build",
-    "watch": "rm -rf build && babel src --watch --out-dir build",
+    "build": "rm -rf lib && babel src --out-dir lib",
+    "watch": "rm -rf lib && babel src --watch --out-dir lib",
     "sample": "DEBUG=jservice:* node sample/basic",
     "start": "DEBUG=jservice:* nodemon sample/basic",
     "prepublish": "npm run build",
     "postuninstall": "npm run build",
-    "test": "mocha",
+    "test": "nyc mocha",
     "test-watch": "mocha --watch",
-    "coverage": "nyc mocha",
-    "codecov": "nyc mocha && nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "repository": {
     "type": "git",
@@ -51,6 +50,6 @@
   },
   "files": [
     "src",
-    "build"
+    "lib"
   ]
 }
