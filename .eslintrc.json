@@ -20,5 +20,10 @@
       "error",
       "never"
     ]
+  },
+  "globals": {
+    "describe": true,
+    "it": true,
+    "expect": true
   }
 }

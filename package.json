@@ -6,10 +6,12 @@
   "scripts": {
     "build": "rm -rf build && babel src --out-dir build",
     "watch": "rm -rf build && babel src --watch --out-dir build",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "sample": "DEBUG=jservice:* node sample/basic",
     "start": "DEBUG=jservice:* nodemon sample/basic",
-    "publish": "npm run build"
+    "test": "mocha",
+    "test-watch": "mocha --watch",
+    "coverage": "nyc mocha",
+    "report": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "repository": {
     "type": "git",
@@ -35,9 +37,14 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.4.5",
     "babel-eslint": "^10.0.1",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "codecov": "^3.5.0",
     "eslint": "^5.16.0",
     "express": "^4.17.1",
+    "mocha": "^6.1.4",
     "nodemon": "^1.19.1",
+    "nyc": "^14.1.1",
     "shortid": "^2.2.14"
   },
   "files": [

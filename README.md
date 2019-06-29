@@ -1,8 +1,14 @@
 # JService
 
-A javascript DI container at its smallest form. Inspired by .Net Core with dependency scoping. Singleton, Scoped and Transient.
+A javascript DI container at its smallest form with dependency scoping such as Singleton, Scoped and Transient. Truly inspired by .Net Core.
 
-To see the scoped service in action, which binds to request object in Express. Check out [Excore](https://github.com/rhaldkhein/excore).
+- Singleton services are the same across providers
+- Scoped services are the same within the provider but different on another provider
+- Transient services are always different
+
+To see the scoped service in action, that binds to the request object in Express. Check out [Excore](https://github.com/rhaldkhein/excore).
+
+[![Build Status](https://travis-ci.org/rhaldkhein/jservice.svg?branch=master)](https://travis-ci.org/rhaldkhein/jservice) [![codecov](https://codecov.io/gh/rhaldkhein/jservice/branch/master/graph/badge.svg)](https://codecov.io/gh/rhaldkhein/jservice)
 
 ### Install
 

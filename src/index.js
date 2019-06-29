@@ -9,11 +9,11 @@ class Builder {
 
   constructor() {
     this.collection = new ServiceCollection(this)
+    this.collection.addSingleton(this, '$core')
     this.provider = new ServiceProvider(this.collection)
   }
 
   build(registry) {
-    this.collection.addSingleton(this, '$core')
     if (typeof registry === 'function')
       registry(this.collection)
     return this
