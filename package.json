@@ -13,7 +13,7 @@
     "test": "mocha",
     "test-watch": "mocha --watch",
     "coverage": "nyc mocha",
-    "report": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "codecov": "nyc mocha && codecov"
   },
   "repository": {
     "type": "git",

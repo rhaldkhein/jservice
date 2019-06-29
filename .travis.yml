@@ -5,4 +5,4 @@ branches:
   only:
   - master
 sudo: false
-after_success: npm run report
+after_success: npm run codecov
