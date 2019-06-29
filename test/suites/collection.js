@@ -1,4 +1,4 @@
-const { Builder, ServiceCollection } = require('../../build')
+const { Builder, ServiceCollection } = require('../../lib')
 
 describe('collection', () => {
 
