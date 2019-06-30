@@ -1,6 +1,6 @@
 {
   "name": "jservice",
-  "version": "0.1.14",
+  "version": "0.0.0",
   "description": "A javascript DI container at its smallest form",
   "main": "lib/index.js",
   "scripts": {
@@ -9,7 +9,6 @@
     "sample": "DEBUG=jservice:* node sample/basic",
     "start": "DEBUG=jservice:* nodemon sample/basic",
     "prepare": "npm run build",
-    "install": "npm run build",
     "test": "nyc mocha",
     "test-watch": "mocha --watch",
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
