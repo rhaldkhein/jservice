@@ -48,12 +48,12 @@ const Transient = require('./services/transient')
 module.exports = services => {
 
   // Add services
-  services.addSingleton(SingletonService)
-  services.addScoped(ScopedService)
-  services.addTransient(Transient)
+  services.singleton(SingletonService)
+  services.scoped(ScopedService)
+  services.transient(Transient)
 
-  services.addSingleton({ foo: 'bar' }, 'foo')
-  services.addSingleton(Server)
+  services.singleton({ foo: 'bar' }, 'foo')
+  services.singleton(Server)
 
 }
 
@@ -65,30 +65,30 @@ To test the service, create `test.js` and run it after the builder started.
 module.exports = (provider, builder) => {
 
   console.log('MAIN PROVIDER')
-  console.log('Singleton | ', provider.getService('singleton').id)
+  console.log('Singleton | ', provider.service('singleton').id)
 
   console.log('SCOPED PROVIDER A (1st request)')
   const scopedProviderA = builder.createScopedProvider()
-  console.log('Singleton | ', scopedProviderA.getService('singleton').id)
-  console.log('Singleton | ', scopedProviderA.getService('singleton').id)
-  console.log('Scoped    | ', scopedProviderA.getService('scoped').id)
-  console.log('Scoped    | ', scopedProviderA.getService('scoped').id)
-  console.log('Transient | ', scopedProviderA.getService('transient').id)
-  console.log('Transient | ', scopedProviderA.getService('transient').id)
+  console.log('Singleton | ', scopedProviderA.service('singleton').id)
+  console.log('Singleton | ', scopedProviderA.service('singleton').id)
+  console.log('Scoped    | ', scopedProviderA.service('scoped').id)
+  console.log('Scoped    | ', scopedProviderA.service('scoped').id)
+  console.log('Transient | ', scopedProviderA.service('transient').id)
+  console.log('Transient | ', scopedProviderA.service('transient').id)
 
   console.log('SCOPED PROVIDER B (2nd request)')
   const scopedProviderB = builder.createScopedProvider()
-  console.log('Singleton | ', scopedProviderB.getService('singleton').id)
-  console.log('Singleton | ', scopedProviderB.getService('singleton').id)
-  console.log('Scoped    | ', scopedProviderB.getService('scoped').id)
-  console.log('Scoped    | ', scopedProviderB.getService('scoped').id)
-  console.log('Transient | ', scopedProviderB.getService('transient').id)
-  console.log('Transient | ', scopedProviderB.getService('transient').id)
+  console.log('Singleton | ', scopedProviderB.service('singleton').id)
+  console.log('Singleton | ', scopedProviderB.service('singleton').id)
+  console.log('Scoped    | ', scopedProviderB.service('scoped').id)
+  console.log('Scoped    | ', scopedProviderB.service('scoped').id)
+  console.log('Transient | ', scopedProviderB.service('transient').id)
+  console.log('Transient | ', scopedProviderB.service('transient').id)
 
   // This will throw error as its a global provider (singleton) that 
   // requires scoped service
-  // provider.getService('scoped')
-  // provider.getService('transient')
+  // provider.service('scoped')
+  // provider.service('transient')
 
 }
 ```

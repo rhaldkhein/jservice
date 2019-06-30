@@ -37,11 +37,7 @@ export default class ServiceCollection {
     this.services[index].config = config
   }
 
-  add(service, name, config) {
-    return this.addSingleton(service, name, config)
-  }
-
-  addSingleton(service, name, config) {
+  singleton(service, name, config) {
     if (!service) return
     if (isFunction(name)) {
       config = name
@@ -59,7 +55,7 @@ export default class ServiceCollection {
     service.type = this.types.SINGLETON
   }
 
-  addTransient(service, name, config) {
+  transient(service, name, config) {
     if (!isFunction(service)) return
     if (isFunction(name)) {
       config = name
@@ -70,7 +66,7 @@ export default class ServiceCollection {
     service.type = this.types.TRANSIENT
   }
 
-  addScoped(service, name, config) {
+  scoped(service, name, config) {
     if (!isFunction(service)) return
     if (isFunction(name)) {
       config = name

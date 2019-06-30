@@ -11,21 +11,13 @@ export default class ServiceProvider {
     this._parent = parentProvider
   }
 
-  get(name) {
-    return this.getService(name)
-  }
-
-  getService(name) {
+  serviceOrNull(name) {
     let index = this._collection.names[name.toLowerCase()]
     if (index === undefined) return null
     return this.createService(index)
   }
 
-  getRequired(name) {
-    return this.getRequiredService(name)
-  }
-
-  getRequiredService(name) {
+  service(name) {
     let index = this._collection.names[name.toLowerCase()]
     if (index === undefined)
       throw new Error(`Missing required service "${name}"`)

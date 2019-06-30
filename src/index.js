@@ -9,7 +9,7 @@ class Builder {
 
   constructor() {
     this.collection = new ServiceCollection(this)
-    this.collection.addSingleton(this, '$core')
+    this.collection.singleton(this, '$core')
     this.provider = new ServiceProvider(this.collection)
   }
 
