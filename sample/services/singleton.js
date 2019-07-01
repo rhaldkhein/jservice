@@ -1,6 +1,6 @@
 const shortid = require('shortid')
 
-const SingletonService = module.exports = function (provider) {
+const SingletonService = module.exports = function () {
   this.id = shortid.generate()
 }
 

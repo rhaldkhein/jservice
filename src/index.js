@@ -1,47 +1,27 @@
+import Builder from './builder'
 import ServiceCollection from './collection'
 import ServiceProvider from './provider'
+import http from 'http'
 
-class Builder {
+const proto = http.IncomingMessage.prototype
 
-  collection = null
-  provider = null
-  isReady = false
-
-  constructor() {
-    this.collection = new ServiceCollection(this)
-    this.collection.singleton(this, '$core')
-    this.provider = new ServiceProvider(this.collection)
+function middleware(registry) {
+  if (
+    proto.service !== undefined ||
+    proto.serviceOrNull !== undefined
+  ) throw new Error('Not compatible with the version of node')
+  proto.service = function (name) {
+    return this._provider.service(name)
   }
-
-  build(registry) {
-    if (typeof registry === 'function')
-      registry(this.collection)
-    return this
+  proto.serviceOrNull = function (name) {
+    return this._provider.serviceOrNull(name)
   }
-
-  start() {
-    return Promise.all(this.invoke('start'))
-      .then(() => {
-        this.isReady = true
-        this.invoke('ready')
-      })
-      .then(() => this.provider)
+  const builder = build(registry)
+  function middleware(req, res, next) {
+    req._provider = this.createScopedProvider()
+    next()
   }
-
-  createScopedProvider() {
-    return new ServiceProvider(this.collection, this.provider)
-  }
-
-  invoke(event) {
-    let results = []
-    const { services } = this.collection
-    services.forEach(service => {
-      const method = service[event]
-      if (method) results.push(method(this.provider))
-    })
-    return results
-  }
-
+  return middleware.bind(builder)
 }
 
 function build(registry) {
@@ -56,17 +36,15 @@ function mock(...services) {
   return builder.provider
 }
 
-
-export default build
+export default middleware
 export {
-
+  // Middlewares
+  middleware as jservice,
   // Functions
   build,
   mock,
-
   // Classes
   Builder,
   ServiceCollection,
   ServiceProvider
-
 }
