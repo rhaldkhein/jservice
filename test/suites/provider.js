@@ -89,4 +89,16 @@ describe('provider', () => {
     expect(singleton).to.be.instanceOf(SingletonService)
   })
 
+  it('get service using shorthand', () => {
+    const builder = new Builder()
+    builder.build(services => {
+      services.singleton(SingletonService)
+    })
+    const scopedProvider = builder.createScopedProvider()
+    const singleton = scopedProvider.get('singleton')
+    const nothing = scopedProvider.getOrNull('nothing')
+    expect(singleton).to.be.instanceOf(SingletonService)
+    expect(nothing).to.not.exist
+  })
+
 })

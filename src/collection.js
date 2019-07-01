@@ -37,6 +37,10 @@ export default class ServiceCollection {
     this.services[index].config = config
   }
 
+  add(service, name, config) {
+    this.singleton(service, name, config)
+  }
+
   singleton(service, name, config) {
     if (!service) return
     if (isFunction(name)) {
