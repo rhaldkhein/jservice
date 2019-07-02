@@ -1,4 +1,4 @@
-const { Builder } = require('../../lib')
+const Builder = require('../../lib')
 
 describe('provider', () => {
 

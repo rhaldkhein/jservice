@@ -23,7 +23,7 @@ global.services = {
   FooService
 }
 
-glob.sync('./build/**/*.js').forEach(function (file) {
+glob.sync('./lib/**/*.js').forEach(function (file) {
   require(path.resolve(file))
 })
 
