@@ -1,27 +1,17 @@
 import Builder from './builder'
 import ServiceCollection from './collection'
 import ServiceProvider from './provider'
-import http from 'http'
+import defaultAdapter from './adapters/connect'
 
-const proto = http.IncomingMessage.prototype
-
-function middleware(registry) {
-  if (
-    proto.service !== undefined ||
-    proto.serviceOrNull !== undefined
-  ) throw new Error('Not compatible with the version of node')
-  proto.service = function (name) {
-    return this._provider.service(name)
+function middleware(registry, adapter) {
+  if (!adapter) adapter = defaultAdapter()
+  adapter.proto.serviceOrNull = adapter.getter
+  adapter.proto.service = function (name) {
+    const service = this.serviceOrNull(name)
+    if (!service) throw new Error(`Missing service "${name}"`)
+    return service
   }
-  proto.serviceOrNull = function (name) {
-    return this._provider.serviceOrNull(name)
-  }
-  const builder = build(registry)
-  function middleware(req, res, next) {
-    req._provider = this.createScopedProvider()
-    next()
-  }
-  return middleware.bind(builder)
+  return adapter.setter.bind(build(registry))
 }
 
 function build(registry) {
