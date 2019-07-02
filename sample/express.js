@@ -1,10 +1,12 @@
 const express = require('express')
-const { jservice } = require('../lib')
+const JService = require('../lib')
 const registry = require('./services/registry')
+
 const app = express()
 const port = 3000
+const jservice = new JService(registry)
 
-app.use(jservice(registry))
+app.use(jservice.init())
 
 app.get('/', (req, res) => {
   const singlA = req.service('singleton')
@@ -15,6 +17,7 @@ app.get('/', (req, res) => {
   const transB = req.service('transient')
   res.send(`
   <pre>
+  
   Express JService
 
   Services  |  Id
@@ -31,5 +34,9 @@ app.get('/', (req, res) => {
   `)
 })
 
-// eslint-disable-next-line no-console
-app.listen(port, () => console.log(`Listening on port ${port}!`))
+jservice.start()
+  .then(() => {
+    app.listen(port)
+    // eslint-disable-next-line no-console
+    console.log(`Listening on port ${port}`)
+  })

@@ -1,16 +1,15 @@
 const Koa = require('koa')
-const { jservice } = require('../lib')
+const JService = require('../lib')
 const registry = require('./services/registry')
 const { default: koaAdapter } = require('../lib/adapters/koa')
 
 const app = new Koa()
+const port = 3000
+const jservice = new JService(registry)
 
-app.use(
-  jservice(
-    registry,
-    koaAdapter(app.context)
-  )
-)
+app.use(jservice.init(
+  koaAdapter(app.context)
+))
 
 app.use(async ctx => {
   const singlA = ctx.service('singleton')
@@ -21,7 +20,8 @@ app.use(async ctx => {
   const transB = ctx.service('transient')
   ctx.body = `
   <pre>
-  Express JService
+  
+  Koa JService
 
   Services  |  Id
   - - - - - | - - - - - -
@@ -37,4 +37,9 @@ app.use(async ctx => {
   `
 })
 
-app.listen(3000)
+jservice.start()
+  .then(() => {
+    app.listen(port)
+    // eslint-disable-next-line no-console
+    console.log(`Listening on port ${port}`)
+  })

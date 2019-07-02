@@ -1,8 +1,11 @@
-const service = require('restana')({})
-const { jservice } = require('../lib')
+const rastana = require('restana')
+const JService = require('../lib')
 const registry = require('./services/registry')
 
-service.use(jservice(registry))
+const service = rastana({})
+const jservice = new JService(registry)
+
+service.use(jservice.init())
 
 service.get('/', (req, res) => {
   const singlA = req.service('singleton')
@@ -13,6 +16,7 @@ service.get('/', (req, res) => {
   const transB = req.service('transient')
   res.send(`
   <pre>
+  
   Restana JService
 
   Services  |  Id
@@ -29,4 +33,9 @@ service.get('/', (req, res) => {
   `)
 })
 
-service.start()
+jservice.start()
+  .then(() => {
+    service.start()
+    // eslint-disable-next-line no-console
+    console.log('Listening on port 3000')
+  })
