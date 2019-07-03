@@ -5,3 +5,7 @@ const SingletonService = module.exports = function () {
 }
 
 SingletonService.service = 'singleton'
+
+SingletonService.prototype.sayHello = function () {
+  // console.log('Hello World')
+}

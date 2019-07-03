@@ -9,4 +9,6 @@ module.exports = services => {
   services.transient(TransientService)
   services.singleton({ foo: 'bar' }, 'foo')
 
+  // Add and configure more services
+
 }

@@ -1,4 +1,5 @@
-const { Builder, ServiceCollection } = require('../../lib')
+const Builder = require('../../lib')
+const { ServiceCollection } = Builder
 
 describe('collection', () => {
 
@@ -102,6 +103,13 @@ describe('collection', () => {
     const transient = col.services[col.names['transient']]
     expect(singleton.config).to.be.a('function')
     expect(transient.config).to.be.a('function')
+  })
+
+  it('run setup method', (done) => {
+    const builder = new Builder()
+    function CustomService() { }
+    CustomService.setup = () => { done() }
+    builder.collection.singleton(CustomService, 'custom')
   })
 
 })

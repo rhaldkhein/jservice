@@ -1,24 +1,27 @@
-const express = require('express')
+const Koa = require('koa')
 const JService = require('../lib')
 const registry = require('./services/registry')
+const { default: koaAdapter } = require('../lib/adapters/koa')
 
-const app = express()
+const app = new Koa()
 const port = 3000
 const jservice = new JService(registry)
 
-app.use(jservice.init())
+app.use(jservice.init(
+  koaAdapter(app.context)
+))
 
-app.get('/', (req, res) => {
-  const singlA = req.service('singleton')
-  const singlB = req.service('singleton')
-  const scopeA = req.service('scoped')
-  const scopeB = req.service('scoped')
-  const transA = req.service('transient')
-  const transB = req.service('transient')
-  res.send(`
+app.use(async ctx => {
+  const singlA = ctx.service('singleton')
+  const singlB = ctx.service('singleton')
+  const scopeA = ctx.service('scoped')
+  const scopeB = ctx.service('scoped')
+  const transA = ctx.service('transient')
+  const transB = ctx.service('transient')
+  ctx.body = `
   <pre>
   
-  Express JService
+  Koa JService
 
   Services  |  Id
   - - - - - | - - - - - -
@@ -31,7 +34,7 @@ app.get('/', (req, res) => {
 
   Hit reload and compare the ids
   </pre>
-  `)
+  `
 })
 
 jservice.start()

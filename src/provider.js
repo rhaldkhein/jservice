@@ -1,13 +1,11 @@
 export default class ServiceProvider {
 
-  _types = null
   _collection = null
   _instances = {}
   _parent = null
 
   constructor(collection, parentProvider) {
     this._collection = collection
-    this._types = collection.types
     this._parent = parentProvider
   }
 
@@ -35,27 +33,28 @@ export default class ServiceProvider {
   createService(index) {
     let Service = this._collection.services[index]
     let instance, name = Service.service
+    let { SINGLETON, CONCRETE, SCOPED } = this._collection.types
 
-    // Validate resolution, singleton should not resolve scoped or transient.
-    // If `this._parent` exists, that means that this provider is a scoped.
+    // Validate resolution, singleton must not resolve scoped or transient.
+    // If `this._parent` exists, means that, this provider is a scoped.
     // Otherwise, singleton.
-    if (!this._parent && Service.type > this._types.SINGLETON)
+    if (!this._parent && Service.type > SINGLETON)
       throw new Error('Singletons should not get scoped or transient services')
 
-    if (Service.type <= this._types.SINGLETON) {
+    if (Service.type <= SINGLETON) {
       if (this._parent) {
         // Use parent instead
         instance = this._parent.createService(index)
       } else {
         instance = this._instances[name]
         if (!instance) {
-          instance = Service.type === this._types.CONCRETE ?
+          instance = Service.type === CONCRETE ?
             Service() :
             new Service(this, Service.config && Service.config(this))
           this._instances[name] = instance
         }
       }
-    } else if (Service.type === this._types.SCOPED) {
+    } else if (Service.type === SCOPED) {
       instance = this._instances[name]
       if (!instance) {
         instance = new Service(this, Service.config && Service.config(this))

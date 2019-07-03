@@ -1,10 +1,10 @@
+const Builder = require('../../lib')
 const {
-  Builder,
   ServiceProvider,
   ServiceCollection,
-  build,
+  create,
   mock
-} = require('../../lib')
+} = Builder
 
 describe('builder', () => {
 
@@ -34,7 +34,7 @@ describe('builder', () => {
   })
 
   it('create using build function', () => {
-    const builder = build()
+    const builder = create()
     expect(builder).to.be.instanceOf(Builder)
   })
 
