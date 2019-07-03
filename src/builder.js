@@ -11,7 +11,6 @@ export default class Builder {
 
   constructor(registry) {
     this.collection = new ServiceCollection(this)
-    this.collection.singleton(this, '$core')
     this.provider = new ServiceProvider(this.collection)
     this.build(registry)
   }
