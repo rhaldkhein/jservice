@@ -61,7 +61,7 @@ export default class ServiceCollection {
       Service.service = name
       return
     }
-    name = (name || service.service).toLowerCase()
+    name = (name || service.service || '').toLowerCase()
     service.type = this.types.SINGLETON
     this._push(service, name, config)
   }
@@ -72,7 +72,7 @@ export default class ServiceCollection {
       config = name
       name = null
     }
-    name = (name || service.service).toLowerCase()
+    name = (name || service.service || '').toLowerCase()
     service.type = this.types.TRANSIENT
     this._push(service, name, config)
   }
@@ -83,7 +83,7 @@ export default class ServiceCollection {
       config = name
       name = null
     }
-    name = (name || service.service).toLowerCase()
+    name = (name || service.service || '').toLowerCase()
     service.type = this.types.SCOPED
     this._push(service, name, config)
   }

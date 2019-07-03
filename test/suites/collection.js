@@ -105,4 +105,11 @@ describe('collection', () => {
     expect(transient.config).to.be.a('function')
   })
 
+  it('run setup method', (done) => {
+    const builder = new Builder()
+    function CustomService() { }
+    CustomService.setup = () => { done() }
+    builder.collection.singleton(CustomService, 'custom')
+  })
+
 })
