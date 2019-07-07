@@ -2,30 +2,30 @@
 
 [![Build Status](https://travis-ci.org/rhaldkhein/jservice.svg?branch=master)](https://travis-ci.org/rhaldkhein/jservice) [![codecov](https://codecov.io/gh/rhaldkhein/jservice/branch/master/graph/badge.svg)](https://codecov.io/gh/rhaldkhein/jservice)
 
-A small but powerful **pure javascript** DI container that favors code over configuration, less oppinionated, no automatic dependency resolution, and with dependency scoping such as Singleton, Scoped and Transient. It can also easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
+A small but powerful **pure javascript** DI container that favors code over configuration, less oppinionated, no automatic dependency resolution, and with dependency scoping such as Singleton, Scoped and Transient. It can easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
 
-##### Code Over Configuration
+#### Code Over Configuration
 
-Does NOT require you to configure which dependencies to resolve (in advance) for it to inject automatically to your function or class, but only inject service provider and get the actual service from it. It's like a manual resolution but gives you quicker and flexible dependency injection.
+Does NOT require you to configure which dependencies to resolve (in advance) for it to automatically inject into your function or class, but instead, it only inject service provider to get the actual service. It's like a manual resolution but gives you quicker and flexible dependency injection.
 
-##### Dependency Scoping
+#### Dependency Scoping
 
 - *Singleton* - services are the same across providers
 - *Scoped* - services are the same within the provider but different on another instance of provider
 - *Transient* - services are always different even within the same provider
 
-##### Integrate with Node Web Frameworks
+#### Integrate with Node Web Frameworks
 
 Directly infuse web frameworks with dependency injection without changing the middleware's function signature.
 
 
-### Install
+## Install
 
 ```sh
 npm install jservice
 ```
 
-### Basic Usage
+## Basic Usage
 
 Using the core builder, without a web framework.
 
@@ -59,7 +59,7 @@ var provider = jservice.createScopedProvider()
 var user = provider.service('user')
 ```
 
-### Basic Integration Usage
+## Basic Integration Usage
 
 Designed to easily integrate with any web framework using middleware.
 
@@ -93,7 +93,7 @@ app.post('/signup', (req, res) => {
 jservice.start().then(() => app.listen(3000))
 ```
 
-### Creating Services
+## Creating Services
 
 A service can be a class, function constructor, or concrete object. You basically don't need to do or set anything on the service. However, there are some options you can take, like explicitly putting the name and hook to startup lifecycle.
 
@@ -134,7 +134,7 @@ class Database {
 }
 ```
 
-### Registering Services
+## Registering Services
 
 Create a file `registry.js` and add all the services.
 
@@ -176,7 +176,7 @@ jservice.build(registry)
 jservice.build(moreRegistry)
 ```
 
-### Service Scoping & Samples
+## Service Scoping & Samples
 
 In sample folder, you'll find various web framework integration samples and scope testing.
 
@@ -214,7 +214,7 @@ npm install
 npm run sample
 ```
 
-### Mocking
+## Mocking
 
 ```javascript
 const { mock } = require('jservice')
@@ -232,6 +232,6 @@ const { provider } = mock(
 new User(provider)
 ```
 
-### License
+## License
 
 MIT
