@@ -10,8 +10,8 @@ function mock(...services) {
   const builder = new Builder()
   if (typeof services[1] === 'string')
     services = [[services[0], services[1]]]
-  services.forEach(s => builder.collection.add(s[0], s[1]))
-  return builder.provider
+  services.forEach(s => builder.collection.add(s[0], s[1], s[2]))
+  return builder
 }
 
 Object.assign(Builder, {

@@ -55,4 +55,9 @@ export default class Builder {
     return results
   }
 
+  merge(builder) {
+    this.collection.merge(builder.collection)
+    return this
+  }
+
 }

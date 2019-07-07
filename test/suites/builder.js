@@ -8,6 +8,13 @@ const {
 
 describe('builder', () => {
 
+  const {
+    TransientService,
+    ScopedService,
+    SingletonService,
+    FooService
+  } = global.services
+
   it('initial state', () => {
     const builder = new Builder()
     expect(builder.isReady).to.be.false
@@ -38,25 +45,45 @@ describe('builder', () => {
     expect(builder).to.be.instanceOf(Builder)
   })
 
+  it('merge', () => {
+    const builderA = create(services => {
+      services.singleton(SingletonService)
+      services.scoped(ScopedService)
+      services.transient(TransientService)
+    })
+    const builderB = create(services => {
+      services.transient(FooService)
+    })
+    builderB.merge(builderA)
+    const singleton = builderB.provider.service('singleton')
+    expect(singleton).to.be.instanceOf(SingletonService)
+    // For scoped services
+    const provider = builderB.createScopedProvider()
+    const scoped = provider.service('scoped')
+    const transient = provider.service('transient')
+    expect(scoped).to.be.instanceOf(ScopedService)
+    expect(transient).to.be.instanceOf(TransientService)
+  })
+
   it('mock function - empty', () => {
-    const provider = mock()
-    expect(provider).to.be.instanceOf(ServiceProvider)
+    const builder = mock()
+    expect(builder).to.be.instanceOf(Builder)
   })
 
   it('mock function - single service', () => {
-    const provider = mock({ foo: 'Bar' }, 'foo')
-    expect(provider).to.be.instanceOf(ServiceProvider);
-    (() => provider.service('foo')).should.not.throw(Error)
+    const builder = mock({ foo: 'Bar' }, 'foo')
+    expect(builder).to.be.instanceOf(Builder);
+    (() => builder.provider.service('foo')).should.not.throw(Error)
   })
 
   it('mock function - multiple services', () => {
-    const provider = mock(
+    const builder = mock(
       [{ foo: 'Bar' }, 'foo'],
       [{ baz: 'Yoo' }, 'baz']
     )
-    expect(provider).to.be.instanceOf(ServiceProvider);
-    (() => provider.service('foo')).should.not.throw(Error);
-    (() => provider.service('baz')).should.not.throw(Error)
+    expect(builder).to.be.instanceOf(Builder);
+    (() => builder.provider.service('foo')).should.not.throw(Error);
+    (() => builder.provider.service('baz')).should.not.throw(Error)
   })
 
 })
