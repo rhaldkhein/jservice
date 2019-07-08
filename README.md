@@ -48,20 +48,14 @@ function registry(services) {
 // Build services
 jservice.build(registry)
 
-// RESOLVING SERVICES
-
-// Main singleton provider
+// Resolve service via provider
 var db = jservice.provider.service('database')
 db.Books.find(123).then(book => console.log(book))
-
-// Or scoped provider (per request)
-var provider = jservice.createScopedProvider()
-var user = provider.service('user')
 ```
 
 ## Basic Integration Usage
 
-Designed to easily integrate with any web framework using middleware.
+Easily integrate with any web framework using middleware.
 
 ```javascript
 var JService = require('jservice')
@@ -97,7 +91,7 @@ jservice.start().then(() => app.listen(3000))
 
 A service can be a class, function constructor, or concrete object. You basically don't need to do or set anything on the service. However, there are some options you can take, like explicitly putting the name and hook to startup lifecycle.
 
-Basic ES5 service `user.js`, with no name and hooks (pure).
+Basic ES5 service `user.js`, with no name and hooks (pure service).
 
 ```javascript
 function User(provider) {
@@ -144,17 +138,14 @@ var User = require('./services/user')
 // more service ...
 
 module.exports = services => {
-  // Add a singleton service
-  // No need to set name as we set it already in the service
+  // Add a singleton service, no need to set name as we set it already in the service
   services.singleton(Database)
-  // Add a transient service
-  // Need to explicitly set name
+  // Add a transient service, need to explicitly set name
   services.transient(User, 'user')
-  // more ...
+  // more services...
   services.scoped(Foo)
-  services.add(Bar) // alias for singleton
-  // We can also add a service multiple times but
-  // need to set different name
+  services.add(Bar) // add() is an alias for singleton
+  // We can also add a service multiple times but need to set different name
   services.add(Config, 'user-config')
   services.add(Config, 'database-config')
 }
