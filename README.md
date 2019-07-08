@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rhaldkhein/jservice.svg?branch=master)](https://travis-ci.org/rhaldkhein/jservice) [![codecov](https://codecov.io/gh/rhaldkhein/jservice/branch/master/graph/badge.svg)](https://codecov.io/gh/rhaldkhein/jservice)
 
-A small but powerful **pure javascript** DI container that favors code over configuration, less oppinionated, no automatic dependency resolution, and with dependency scoping such as Singleton, Scoped and Transient. It can easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
+A small and powerful **pure javascript** DI container that favors code over configuration, less oppinionated, no automatic dependency resolution, and with dependency scoping such as Singleton, Scoped and Transient. It can easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
 
 #### Code Over Configuration
 
