@@ -1,3 +1,5 @@
+const isConstructor = fn => typeof fn === 'function' && fn.hasOwnProperty('prototype')
+
 export default class ServiceProvider {
 
   _collection = null
@@ -33,7 +35,7 @@ export default class ServiceProvider {
   createService(index) {
     let Service = this._collection.services[index]
     let instance, name = Service.service
-    let { SINGLETON, CONCRETE, SCOPED } = this._collection.types
+    let { SINGLETON, SCOPED } = this._collection.types
 
     // Validate resolution, singleton must not resolve scoped or transient.
     // If `this._parent` exists, means that, this provider is a scoped.
@@ -48,22 +50,26 @@ export default class ServiceProvider {
       } else {
         instance = this._instances[name]
         if (!instance) {
-          instance = Service.type === CONCRETE ?
-            Service() :
-            new Service(this, Service.config && Service.config(this))
+          instance = this._instantiate(Service)
           this._instances[name] = instance
         }
       }
     } else if (Service.type === SCOPED) {
       instance = this._instances[name]
       if (!instance) {
-        instance = new Service(this, Service.config && Service.config(this))
+        instance = this._instantiate(Service)
         this._instances[name] = instance
       }
     } else {
-      instance = new Service(this, Service.config && Service.config(this))
+      instance = this._instantiate(Service)
     }
     return instance
+  }
+
+  _instantiate(Service) {
+    return isConstructor(Service) ?
+      new Service(this, Service.config && Service.config(this)) :
+      Service()
   }
 
 }

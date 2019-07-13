@@ -18,8 +18,9 @@ describe('collection', () => {
       services.singleton(SingletonService)
       services.singleton({ ultra: 'man' }, 'ultra')
       services.add(FooService)
+      services.add(() => ({ anon: 'Anonymous' }), 'anon')
       // # of services + 1 core
-      expect(services.services).to.have.lengthOf(6)
+      expect(services.services).to.have.lengthOf(7)
       expect(services.services).to.include.members([
         TransientService,
         ScopedService,
