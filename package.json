@@ -1,7 +1,7 @@
 {
   "name": "jservice",
-  "version": "0.0.0",
-  "description": "A javascript DI container at its smallest form",
+  "version": "0.1.18",
+  "description": "A small and powerful pure javascript DI container",
   "main": "lib/index.js",
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib",
@@ -24,10 +24,11 @@
   },
   "homepage": "https://github.com/rhaldkhein/jservice#readme",
   "keywords": [
-    "modular",
     "ioc",
+    "dependency-injection",
     "di",
-    "framework"
+    "container",
+    "services"
   ],
   "dependencies": {},
   "devDependencies": {
