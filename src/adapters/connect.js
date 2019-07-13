@@ -1,6 +1,4 @@
-import http from 'http'
-
-export default function (contextProto = http.IncomingMessage.prototype, options = {}) {
+export default function (contextProto, options = {}) {
   return {
     proto: contextProto,
     getter: options.getter || function (name) {
