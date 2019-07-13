@@ -10,18 +10,22 @@ describe('provider', () => {
 
   it('get singleton service', () => {
     const builder = new Builder()
+    const anonValue = { anon: 'Anonymous' }
     builder.build(services => {
       services.singleton(SingletonService)
       services.singleton({ ultra: 'man' }, 'ultra')
+      services.singleton(() => anonValue, 'anon')
     })
     const { provider } = builder
     const singletonA = provider.service('singleton')
     const singletonB = provider.service('singleton')
     const ultramanA = provider.service('ultra')
     const ultramanB = provider.service('ultra')
+    const anonA = provider.service('anon')
     expect(singletonA).to.be.instanceOf(SingletonService)
     expect(singletonB).to.be.equal(singletonA)
     expect(ultramanB).to.be.equal(ultramanA)
+    expect(anonA).to.be.equal(anonValue)
   })
 
   it('get scoped service', () => {
