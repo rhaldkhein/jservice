@@ -8,12 +8,6 @@ describe('middlewares', () => {
     SingletonService
   } = global.services
 
-  it('default adapter', () => {
-    const builder = new Builder()
-    const middleware = builder.init()
-    expect(middleware).to.be.a('function')
-  })
-
   it('connect adapter', () => {
     const builder = new Builder()
     builder.collection.singleton(SingletonService)
