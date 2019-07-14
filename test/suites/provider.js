@@ -8,6 +8,24 @@ describe('provider', () => {
     SingletonService
   } = global.services
 
+  it('correct instance keys', () => {
+    const builder = new Builder()
+    // Function variable
+    const FuncService = function () { }
+    // Function pure
+    function HelloService() { }
+    // Build
+    builder.build(services => {
+      services.singleton(FuncService, 'func')
+      services.singleton(HelloService, 'hello')
+    })
+    const { provider } = builder
+    provider.service('func')
+    provider.service('hello')
+    expect(provider._instances.func).to.exist
+    expect(provider._instances.hello).to.exist
+  })
+
   it('get singleton service', () => {
     const builder = new Builder()
     const anonValue = { anon: 'Anonymous' }

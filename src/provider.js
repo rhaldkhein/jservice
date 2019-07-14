@@ -20,21 +20,22 @@ export default class ServiceProvider {
   }
 
   service(name) {
-    let index = this._collection.names[name.toLowerCase()]
+    name = name.toLowerCase()
+    let index = this._collection.names[name]
     if (index === undefined)
       throw new Error(`Missing service "${name}"`)
-    return this.createService(index)
+    return this.createService(index, name)
   }
 
   serviceOrNull(name) {
-    let index = this._collection.names[name.toLowerCase()]
+    name = name.toLowerCase()
+    let index = this._collection.names[name]
     if (index === undefined) return null
-    return this.createService(index)
+    return this.createService(index, name)
   }
 
-  createService(index) {
-    let Service = this._collection.services[index]
-    let instance, name = Service.service
+  createService(index, name) {
+    let instance, Service = this._collection.services[index]
     let { SINGLETON, SCOPED } = this._collection.types
 
     // Validate resolution, singleton must not resolve scoped or transient.
@@ -46,7 +47,7 @@ export default class ServiceProvider {
     if (Service.type <= SINGLETON) {
       if (this._parent) {
         // Use parent instead
-        instance = this._parent.createService(index)
+        instance = this._parent.createService(index, name)
       } else {
         instance = this._instances[name]
         if (!instance) {
