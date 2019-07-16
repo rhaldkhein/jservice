@@ -33,7 +33,7 @@ describe('builder', () => {
 
   it('create scoped provider', () => {
     const builder = new Builder()
-    const provider = builder.createScopedProvider()
+    const provider = builder.createProvider()
     expect(provider).to.be.instanceOf(ServiceProvider)
     expect(provider._parent).to.be.instanceOf(ServiceProvider)
     expect(provider._parent).to.be.equal(builder.provider)
@@ -58,7 +58,7 @@ describe('builder', () => {
     const singleton = builderB.provider.service('singleton')
     expect(singleton).to.be.instanceOf(SingletonService)
     // For scoped services
-    const provider = builderB.createScopedProvider()
+    const provider = builderB.createProvider()
     const scoped = provider.service('scoped')
     const transient = provider.service('transient')
     expect(scoped).to.be.instanceOf(ScopedService)
