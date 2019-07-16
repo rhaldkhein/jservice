@@ -7,7 +7,7 @@ export default function (contextProto, options = {}) {
     },
     setter: options.setter || function (ctx, next) {
       // this = builder
-      ctx.provider = this.createScopedProvider()
+      ctx.provider = this.createProvider()
       next()
     }
   }
