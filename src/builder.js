@@ -41,7 +41,7 @@ export default class Builder {
       .then(() => this.provider)
   }
 
-  createScopedProvider() {
+  createProvider() {
     return new ServiceProvider(this.collection, this.provider)
   }
 

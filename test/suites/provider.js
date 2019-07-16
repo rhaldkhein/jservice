@@ -1,4 +1,5 @@
 const Builder = require('../../lib')
+const { ServiceProvider } = Builder
 
 describe('provider', () => {
 
@@ -7,6 +8,32 @@ describe('provider', () => {
     ScopedService,
     SingletonService
   } = global.services
+
+  it('correct service arguments', (done) => {
+    const serviceConfig = { a: 1 }
+    const serviceConfigFunc = () => 'yes'
+    function CustomService(provider, config) {
+      expect(provider).to.be.instanceOf(ServiceProvider)
+      expect(config).to.be.equal(config)
+    }
+    function ZooService(provider, config) {
+      expect(config).to.be.equal('yes')
+    }
+    function YooService(provider, config) {
+      expect(config).to.be.equal(config)
+      done()
+    }
+    YooService.service = 'yoo'
+    const builder = new Builder()
+    builder.build(services => {
+      services.add(CustomService, 'custom', serviceConfig)
+      services.add(ZooService, 'zoo', serviceConfigFunc)
+      services.add(YooService, serviceConfig)
+    })
+    builder.provider.get('custom')
+    builder.provider.get('zoo')
+    builder.provider.get('yoo')
+  })
 
   it('correct instance keys', () => {
     const builder = new Builder()

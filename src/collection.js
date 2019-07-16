@@ -1,4 +1,4 @@
-const isFunction = fn => typeof fn === 'function'
+import { isFunction, isString } from './util'
 
 export default class ServiceCollection {
 
@@ -51,7 +51,7 @@ export default class ServiceCollection {
 
   singleton(service, name, config) {
     if (!service) return
-    if (isFunction(name)) {
+    if (!isString(name)) {
       config = name
       name = null
     }
@@ -69,7 +69,7 @@ export default class ServiceCollection {
 
   transient(service, name, config) {
     if (!isFunction(service)) return
-    if (isFunction(name)) {
+    if (!isString(name)) {
       config = name
       name = null
     }
@@ -80,7 +80,7 @@ export default class ServiceCollection {
 
   scoped(service, name, config) {
     if (!isFunction(service)) return
-    if (isFunction(name)) {
+    if (!isString(name)) {
       config = name
       name = null
     }
