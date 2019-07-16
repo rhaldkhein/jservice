@@ -81,8 +81,8 @@ describe('provider', () => {
     const { provider } = builder;
     // Singleton should not get scoped or transient
     (() => provider.service('scoped')).should.throw(Error)
-    const scopedProviderA = builder.createScopedProvider()
-    const scopedProviderB = builder.createScopedProvider()
+    const scopedProviderA = builder.createProvider()
+    const scopedProviderB = builder.createProvider()
     // 1st scope
     const scopedAA = scopedProviderA.service('scoped')
     const scopedAB = scopedProviderA.service('scoped')
@@ -100,8 +100,8 @@ describe('provider', () => {
     const { provider } = builder;
     // Singleton should not get scoped or transient
     (() => provider.service('transient')).should.throw(Error)
-    const scopedProviderA = builder.createScopedProvider()
-    const scopedProviderB = builder.createScopedProvider()
+    const scopedProviderA = builder.createProvider()
+    const scopedProviderB = builder.createProvider()
     // 1st scope
     const tranAA = scopedProviderA.service('transient')
     const tranAB = scopedProviderA.service('transient')
@@ -133,7 +133,7 @@ describe('provider', () => {
     builder.build(services => {
       services.singleton(SingletonService)
     })
-    const scopedProvider = builder.createScopedProvider()
+    const scopedProvider = builder.createProvider()
     const singleton = scopedProvider.service('singleton')
     expect(singleton).to.be.instanceOf(SingletonService)
   })
@@ -143,7 +143,7 @@ describe('provider', () => {
     builder.build(services => {
       services.singleton(SingletonService)
     })
-    const scopedProvider = builder.createScopedProvider()
+    const scopedProvider = builder.createProvider()
     const singleton = scopedProvider.get('singleton')
     const nothing = scopedProvider.getOrNull('nothing')
     expect(singleton).to.be.instanceOf(SingletonService)
