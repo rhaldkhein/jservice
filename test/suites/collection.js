@@ -7,7 +7,8 @@ describe('collection', () => {
     TransientService,
     ScopedService,
     SingletonService,
-    FooService
+    FooService,
+    BarService,
   } = global.services
 
   it('add services with minimum arguments', () => {
@@ -51,12 +52,14 @@ describe('collection', () => {
 
   it('add services and check types with config ', () => {
     const builder = new Builder()
+    const fooConfig = { a: 1 }
     builder.build(services => {
       services.transient(TransientService, () => null)
       services.scoped(ScopedService, () => null)
       services.singleton(SingletonService, () => null)
       services.singleton({ ultra: 'man' }, 'ultra')
       services.add(FooService, () => null)
+      services.add(BarService, fooConfig)
     })
     const { collection: col } = builder
     const transient = col.services[col.names['transient']]
@@ -64,6 +67,7 @@ describe('collection', () => {
     const singleton = col.services[col.names['singleton']]
     const ultra = col.services[col.names['ultra']]
     const foo = col.services[col.names['foo']]
+    const bar = col.services[col.names['bar']]
     // Types
     expect(transient.type).to.be.equal(col.types.TRANSIENT)
     expect(scoped.type).to.be.equal(col.types.SCOPED)
@@ -75,6 +79,7 @@ describe('collection', () => {
     expect(scoped.config).to.be.a('function')
     expect(singleton.config).to.be.a('function')
     expect(foo.config).to.be.a('function')
+    expect(bar.config).to.be.equal(fooConfig)
   })
 
   it('replace service', () => {

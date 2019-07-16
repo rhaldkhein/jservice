@@ -1,4 +1,4 @@
-const isConstructor = fn => typeof fn === 'function' && fn.hasOwnProperty('prototype')
+import { isFunction, isConstructor } from './util'
 
 export default class ServiceProvider {
 
@@ -68,8 +68,9 @@ export default class ServiceProvider {
   }
 
   _instantiate(Service) {
+    const { config } = Service
     return isConstructor(Service) ?
-      new Service(this, Service.config && Service.config(this)) :
+      new Service(this, isFunction(config) ? config(this) : config) :
       Service()
   }
 
