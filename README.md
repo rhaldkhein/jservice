@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/rhaldkhein/jservice.svg?branch=master)](https://travis-ci.org/rhaldkhein/jservice) [![codecov](https://codecov.io/gh/rhaldkhein/jservice/branch/master/graph/badge.svg)](https://codecov.io/gh/rhaldkhein/jservice)
 
-A small and powerful **pure javascript** DI container that favors code over configuration, less oppinionated, no automatic dependency resolution, and with dependency scoping such as Singleton, Scoped and Transient. It can easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
+A small and powerful **pure javascript** DI container that favors code over configuration, less opinionated, no automatic resolution, and with scoping such as Singleton, Scoped and Transient. It can also easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
 
 #### Code Over Configuration
 
-Does NOT require you to configure which dependencies to resolve (in advance) for it to automatically inject into your function or class, but instead, it only inject service provider to get the actual service. It's like a manual resolution but gives you quicker and flexible dependency injection.
+Does NOT require you to configure which dependencies to resolve in advance and inject into your function or class, but instead, it only inject service provider. It's a manual resolution that gives you quicker and flexible dependency injection.
 
 #### Dependency Scoping
 
@@ -153,7 +153,7 @@ module.exports = services => {
 
 There are several ways to add registry
 
-```Javascript
+```javascript
 // 1st option
 var jservice = new JService(registry)
 // 2nd option
@@ -225,4 +225,5 @@ new User(provider)
 
 ## License
 
-MIT
+MIT License
+Copyright (c) 2019 RhaldKhein
