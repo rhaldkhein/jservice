@@ -37,7 +37,7 @@ export default class ServiceProvider {
   _createService(index, name) {
     let { SINGLETON, SCOPED } = this._collection.types
     let instance, Service = typeof index === 'number' ?
-      this._collection.services[index] : Service
+      this._collection.services[index] : index
 
     // Validate resolution, singleton must not resolve scoped or transient.
     // If `this._parent` exists, means that, this provider is a scoped.
