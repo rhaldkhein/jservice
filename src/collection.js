@@ -16,27 +16,27 @@ export default class ServiceCollection {
     this.singleton(core, '__core__')
   }
 
-  // _push(service, name, config, skip) {
-  _push(value, desc, skipIfExist) {
-    const name = desc.name = (desc.name || value.service || '').toLowerCase()
+  _push(service, desc, skipIfExist) {
+    const name = desc.name = (desc.name || service.service || '').toLowerCase()
     if (!name) throw new Error('Service must have a name')
     const index = this.names[name]
+    desc.value = service
     if (index > -1) {
       if (skipIfExist) return
       // Allow override of service if name starts with `@`
       if (name[0] !== '@')
         throw new Error(`Service "${name}" is already registered`)
-      this.services[index] = { value, desc }
+      this.services[index] = desc
     } else {
-      if (value.singleton && desc.type !== this.types.SINGLETON)
+      if (service.singleton && desc.type !== this.types.SINGLETON)
         throw new Error(`Service "${name}" must be a singleton`)
       desc.index = this.names[name] = this.services.length
-      this.services.push({ value, desc })
+      this.services.push(desc)
     }
     // Run setup static method
-    if (isFunction(value.setup)) {
+    if (isFunction(service.setup)) {
       const core = this.services[0].value()
-      value.setup(core.provider, core.collection)
+      service.setup(core.provider, core.collection)
     }
   }
 
@@ -44,7 +44,7 @@ export default class ServiceCollection {
     const index = this.names[isConstructor(name) ? name.service : name]
     if (index === undefined)
       throw new Error(`Unable to configure unregistered service "${name}"`)
-    this.services[index].desc.config = config
+    this.services[index].config = config
   }
 
   add(service, name, config) {
@@ -93,7 +93,7 @@ export default class ServiceCollection {
     for (const key in col.names) {
       if (col.names.hasOwnProperty(key)) {
         const service = col.services[col.names[key]]
-        this._push(service.value, service.desc, true)
+        this._push(service.value, service, true)
       }
     }
   }

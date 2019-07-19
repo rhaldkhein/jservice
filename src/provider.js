@@ -38,7 +38,7 @@ export default class ServiceProvider {
     let { SINGLETON, SCOPED } = this._collection.types
     let instance,
       service = this._collection.services[index],
-      { name, type } = service.desc
+      { name, type } = service
 
     // Validate resolution, singleton must not resolve scoped or transient.
     // If `this._parent` exists, means that, this provider is a scoped.
@@ -71,7 +71,7 @@ export default class ServiceProvider {
 
   _instantiate(service) {
     const Service = service.value
-    const { config } = service.desc
+    const { config } = service
     if (isConstructor(Service)) return new Service(this, isFunction(config) ? config(this) : config)
     return Service()
   }
