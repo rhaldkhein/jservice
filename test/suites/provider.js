@@ -56,10 +56,16 @@ describe('provider', () => {
   it('get singleton service', () => {
     const builder = new Builder()
     const anonValue = { anon: 'Anonymous' }
+    const anonLambda = () => anonValue
+    const consFunc = function () { }
     builder.build(services => {
+      // Constructors
       services.singleton(SingletonService)
+      services.singleton(consFunc, 'consfunc')
+      // Object
       services.singleton({ ultra: 'man' }, 'ultra')
-      services.singleton(() => anonValue, 'anon')
+      // Lambda (non contructor function)
+      services.singleton(anonLambda, 'anon')
     })
     const { provider } = builder
     const singletonA = provider.service('singleton')
@@ -67,10 +73,12 @@ describe('provider', () => {
     const ultramanA = provider.service('ultra')
     const ultramanB = provider.service('ultra')
     const anonA = provider.service('anon')
+    const consfuncA = provider.service('consfunc')
     expect(singletonA).to.be.instanceOf(SingletonService)
     expect(singletonB).to.be.equal(singletonA)
     expect(ultramanB).to.be.equal(ultramanA)
-    expect(anonA).to.be.equal(anonValue)
+    expect(anonA).to.be.equal(anonLambda)
+    expect(consfuncA).to.be.instanceOf(consFunc)
   })
 
   it('get scoped service', () => {
