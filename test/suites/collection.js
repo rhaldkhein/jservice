@@ -56,12 +56,12 @@ describe('collection', () => {
       services.add(BarService, fooConfig)
     })
     const { collection: col } = builder
-    const transient = col.services[col.names['transient']].desc
-    const scoped = col.services[col.names['scoped']].desc
-    const singleton = col.services[col.names['singleton']].desc
-    const ultra = col.services[col.names['ultra']].desc
-    const foo = col.services[col.names['foo']].desc
-    const bar = col.services[col.names['bar']].desc
+    const transient = col.services[col.names['transient']]
+    const scoped = col.services[col.names['scoped']]
+    const singleton = col.services[col.names['singleton']]
+    const ultra = col.services[col.names['ultra']]
+    const foo = col.services[col.names['foo']]
+    const bar = col.services[col.names['bar']]
     // Types
     expect(transient.type).to.be.equal(col.types.TRANSIENT)
     expect(scoped.type).to.be.equal(col.types.SCOPED)
@@ -101,8 +101,8 @@ describe('collection', () => {
       services.configure(TransientService, () => null)
     })
     const { collection: col } = builder
-    const singleton = col.services[col.names['singleton']].desc
-    const transient = col.services[col.names['transient']].desc
+    const singleton = col.services[col.names['singleton']]
+    const transient = col.services[col.names['transient']]
     expect(singleton.config).to.be.a('function')
     expect(transient.config).to.be.a('function')
   })
