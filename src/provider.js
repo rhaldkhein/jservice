@@ -70,8 +70,9 @@ export default class ServiceProvider {
 
   _instantiate(Service) {
     const { config } = Service
-    if (isConstructor(Service)) return new Service(this, isFunction(config) ? config(this) : config)
-    return isFunction(Service) ? Service() : Service
+    return isConstructor(Service) ?
+      new Service(this, isFunction(config) ? config(this) : config) :
+      Service()
   }
 
 }
