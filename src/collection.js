@@ -16,25 +16,27 @@ export default class ServiceCollection {
     this.singleton(core, '__core__')
   }
 
-  _push(service, name, config, skip) {
+  // _push(service, name, config, skip) {
+  _push(value, desc, skipIfExist) {
+    const name = desc.name = (desc.name || value.service || '').toLowerCase()
     if (!name) throw new Error('Service must have a name')
     const index = this.names[name]
     if (index > -1) {
-      if (skip) return
+      if (skipIfExist) return
       // Allow override of service if name starts with `@`
       if (name[0] !== '@')
         throw new Error(`Service "${name}" is already registered`)
-      this.services[index] = service
+      this.services[index] = { value, desc }
     } else {
-      if (service.singleton && service.type !== this.types.SINGLETON)
+      if (value.singleton && desc.type !== this.types.SINGLETON)
         throw new Error(`Service "${name}" must be a singleton`)
-      this.names[name] = this.services.length
-      this.services.push(service)
+      desc.index = this.names[name] = this.services.length
+      this.services.push({ value, desc })
     }
-    if (config) service.config = config
     // Run setup static method
-    if (isFunction(service.setup)) {
-      service.setup(this.services[0]().provider)
+    if (isFunction(value.setup)) {
+      const core = this.services[0].value()
+      value.setup(core.provider, core.collection)
     }
   }
 
@@ -42,7 +44,7 @@ export default class ServiceCollection {
     const index = this.names[isConstructor(name) ? name.service : name]
     if (index === undefined)
       throw new Error(`Unable to configure unregistered service "${name}"`)
-    this.services[index].config = config
+    this.services[index].desc.config = config
   }
 
   add(service, name, config) {
@@ -55,16 +57,16 @@ export default class ServiceCollection {
       config = name
       name = null
     }
+    let desc = { name, config }
     if (!isConstructor(service)) {
       const Service = () => service
-      Service.type = this.types.CONCRETE
-      this._push(Service, name)
-      Service.service = name
+      desc.type = this.types.CONCRETE
+      desc.typeof = typeof service
+      this._push(Service, desc)
       return
     }
-    name = (name || service.service || '').toLowerCase()
-    service.type = this.types.SINGLETON
-    this._push(service, name, config)
+    desc.type = this.types.SINGLETON
+    this._push(service, desc)
   }
 
   transient(service, name, config) {
@@ -73,9 +75,8 @@ export default class ServiceCollection {
       config = name
       name = null
     }
-    name = (name || service.service || '').toLowerCase()
-    service.type = this.types.TRANSIENT
-    this._push(service, name, config)
+    let desc = { name, config, type: this.types.TRANSIENT }
+    this._push(service, desc)
   }
 
   scoped(service, name, config) {
@@ -84,16 +85,15 @@ export default class ServiceCollection {
       config = name
       name = null
     }
-    name = (name || service.service || '').toLowerCase()
-    service.type = this.types.SCOPED
-    this._push(service, name, config)
+    let desc = { name, config, type: this.types.SCOPED }
+    this._push(service, desc)
   }
 
   merge(col) {
     for (const key in col.names) {
       if (col.names.hasOwnProperty(key)) {
-        const index = col.names[key]
-        this._push(col.services[index], key, null, true)
+        const service = col.services[col.names[key]]
+        this._push(service.value, service.desc, true)
       }
     }
   }

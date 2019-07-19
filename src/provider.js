@@ -24,55 +24,56 @@ export default class ServiceProvider {
     let index = this._collection.names[name]
     if (index === undefined)
       throw new Error(`Missing service "${name}"`)
-    return this._createService(index, name)
+    return this._createService(index)
   }
 
   serviceOrNull(name) {
     name = name.toLowerCase()
     let index = this._collection.names[name]
     if (index === undefined) return null
-    return this._createService(index, name)
+    return this._createService(index)
   }
 
-  _createService(index, name) {
+  _createService(index) {
     let { SINGLETON, SCOPED } = this._collection.types
-    let instance, Service = typeof index === 'number' ?
-      this._collection.services[index] : index
+    let instance,
+      service = this._collection.services[index],
+      { name, type } = service.desc
 
     // Validate resolution, singleton must not resolve scoped or transient.
     // If `this._parent` exists, means that, this provider is a scoped.
     // Otherwise, singleton.
-    if (!this._parent && Service.type > SINGLETON)
+    if (!this._parent && type > SINGLETON)
       throw new Error('Singletons should not get scoped or transient services')
 
-    if (Service.type <= SINGLETON) {
+    if (type <= SINGLETON) {
       if (this._parent) {
         // Use parent instead
-        instance = this._parent._createService(index, name)
+        instance = this._parent._createService(index)
       } else {
         instance = this._instances[name]
         if (!instance) {
-          instance = this._instantiate(Service)
+          instance = this._instantiate(service)
           this._instances[name] = instance
         }
       }
-    } else if (Service.type === SCOPED) {
+    } else if (type === SCOPED) {
       instance = this._instances[name]
       if (!instance) {
-        instance = this._instantiate(Service)
+        instance = this._instantiate(service)
         this._instances[name] = instance
       }
     } else {
-      instance = this._instantiate(Service)
+      instance = this._instantiate(service)
     }
     return instance
   }
 
-  _instantiate(Service) {
-    const { config } = Service
-    return isConstructor(Service) ?
-      new Service(this, isFunction(config) ? config(this) : config) :
-      Service()
+  _instantiate(service) {
+    const Service = service.value
+    const { config } = service.desc
+    if (isConstructor(Service)) return new Service(this, isFunction(config) ? config(this) : config)
+    return Service()
   }
 
 }

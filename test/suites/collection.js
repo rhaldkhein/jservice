@@ -24,12 +24,6 @@ describe('collection', () => {
       expect(services.names.anon).to.exist
       // # of services + 1 core
       expect(services.services).to.have.lengthOf(7)
-      expect(services.services).to.include.members([
-        TransientService,
-        ScopedService,
-        SingletonService,
-        FooService
-      ])
     })
   })
 
@@ -42,9 +36,9 @@ describe('collection', () => {
       services.add(FooService, 'xfoo')
     })
     const { collection: col } = builder
-    const transient = col.services[col.names['xtransient']]
-    const scoped = col.services[col.names['xscoped']]
-    const singleton = col.services[col.names['xsingleton']]
+    const transient = col.services[col.names['xtransient']].value
+    const scoped = col.services[col.names['xscoped']].value
+    const singleton = col.services[col.names['xsingleton']].value
     expect(transient).to.equal(TransientService)
     expect(scoped).to.equal(ScopedService)
     expect(singleton).to.equal(SingletonService)
@@ -62,12 +56,12 @@ describe('collection', () => {
       services.add(BarService, fooConfig)
     })
     const { collection: col } = builder
-    const transient = col.services[col.names['transient']]
-    const scoped = col.services[col.names['scoped']]
-    const singleton = col.services[col.names['singleton']]
-    const ultra = col.services[col.names['ultra']]
-    const foo = col.services[col.names['foo']]
-    const bar = col.services[col.names['bar']]
+    const transient = col.services[col.names['transient']].desc
+    const scoped = col.services[col.names['scoped']].desc
+    const singleton = col.services[col.names['singleton']].desc
+    const ultra = col.services[col.names['ultra']].desc
+    const foo = col.services[col.names['foo']].desc
+    const bar = col.services[col.names['bar']].desc
     // Types
     expect(transient.type).to.be.equal(col.types.TRANSIENT)
     expect(scoped.type).to.be.equal(col.types.SCOPED)
@@ -93,7 +87,7 @@ describe('collection', () => {
       services.transient(NewService, () => null)
     })
     expect(builder.collection.services.length).to.be.equal(2)
-    expect(builder.collection.services[1]).to.be.equal(NewService)
+    expect(builder.collection.services[1].value).to.be.equal(NewService)
   })
 
   it('configure services', () => {
@@ -107,8 +101,8 @@ describe('collection', () => {
       services.configure(TransientService, () => null)
     })
     const { collection: col } = builder
-    const singleton = col.services[col.names['singleton']]
-    const transient = col.services[col.names['transient']]
+    const singleton = col.services[col.names['singleton']].desc
+    const transient = col.services[col.names['transient']].desc
     expect(singleton.config).to.be.a('function')
     expect(transient.config).to.be.a('function')
   })
