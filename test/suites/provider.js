@@ -9,6 +9,25 @@ describe('provider', () => {
     SingletonService
   } = global.services
 
+  it('correct instances', () => {
+    const container = new Container()
+    container.build(services => {
+      services.singleton(SingletonService)
+      services.scoped(ScopedService)
+      services.transient(TransientService)
+    })
+
+    const singA = container.provider.service('singleton')
+    const providerA = container.createProvider()
+    const singB = providerA.service('singleton')
+    expect(singB).to.be.equal(singA)
+
+    const containerA = container.createContainer()
+    const singC = containerA.provider.service('singleton')
+    expect(singC).to.be.equal(singA)
+
+  })
+
   it('custom dependency', (done) => {
     const hello = { a: 1 }
     const world = { b: 2 }
@@ -44,7 +63,6 @@ describe('provider', () => {
         return { world }
       })
     })
-
     subContainer.provider.service('yoo')
   })
 
