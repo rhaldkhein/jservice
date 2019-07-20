@@ -54,7 +54,7 @@ export default class Container {
     let results = []
     const { services } = this.collection
     services.forEach(service => {
-      const method = service[event]
+      const method = service.value[event]
       if (method) results.push(method(this.provider))
     })
     return results
