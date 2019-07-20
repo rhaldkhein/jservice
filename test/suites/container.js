@@ -116,4 +116,24 @@ describe('container', () => {
     (() => container.provider.service('baz')).should.not.throw(Error)
   })
 
+  it('events', (done) => {
+    function EventService() { }
+    EventService.setup = (provider, services) => {
+      expect(provider).to.be.instanceOf(ServiceProvider)
+      expect(services).to.be.instanceOf(ServiceCollection)
+    }
+    EventService.start = provider => {
+      expect(provider).to.be.instanceOf(ServiceProvider)
+    }
+    EventService.ready = provider => {
+      expect(provider).to.be.instanceOf(ServiceProvider)
+      done()
+    }
+    const container = new Container()
+    container.build(services => {
+      services.add(EventService, 'event')
+    })
+    container.start()
+  })
+
 })
