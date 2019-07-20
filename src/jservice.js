@@ -1,20 +1,20 @@
-import Builder from './builder'
+import Container from './container'
 import ServiceCollection from './collection'
 import ServiceProvider from './provider'
 
 function create(registry) {
-  return new Builder().build(registry)
+  return new Container().build(registry)
 }
 
 function mock(...services) {
-  const builder = new Builder()
+  const container = new Container()
   if (typeof services[1] === 'string')
     services = [[services[0], services[1]]]
-  services.forEach(s => builder.collection.add(s[0], s[1], s[2]))
-  return builder
+  services.forEach(s => container.collection.add(s[0], s[1], s[2]))
+  return container
 }
 
-Object.assign(Builder, {
+Object.assign(Container, {
   // Functions
   create,
   mock,
@@ -23,4 +23,4 @@ Object.assign(Builder, {
   ServiceProvider
 })
 
-export default Builder
+export default Container

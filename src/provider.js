@@ -21,35 +21,34 @@ export default class ServiceProvider {
 
   service(name) {
     name = name.toLowerCase()
-    let index = this._collection.names[name]
-    if (index === undefined)
+    const service = this._collection.get(name)
+    if (service === undefined)
       throw new Error(`Missing service "${name}"`)
-    return this._createService(index)
+    return this._createService(service)
   }
 
   serviceOrNull(name) {
     name = name.toLowerCase()
-    let index = this._collection.names[name]
-    if (index === undefined) return null
-    return this._createService(index)
+    const service = this._collection.get(name)
+    if (service === undefined) return null
+    return this._createService(service)
   }
 
-  _createService(index) {
-    let { SINGLETON, SCOPED } = this._collection.types
+  _createService(service) {
     let instance,
-      service = this._collection.services[index],
-      { name, type } = service
+      { name } = service,
+      { SINGLETON, SCOPED } = this._collection.types
 
     // Validate resolution, singleton must not resolve scoped or transient.
     // If `this._parent` exists, means that, this provider is a scoped.
     // Otherwise, singleton.
-    if (!this._parent && type > SINGLETON)
-      throw new Error('Singletons should not get scoped or transient services')
+    if (!this._parent && service.type > SINGLETON)
+      throw new Error('Scoped provider should not get scoped or transient services')
 
-    if (type <= SINGLETON) {
+    if (service.type <= SINGLETON) {
       if (this._parent) {
         // Use parent instead
-        instance = this._parent._createService(index)
+        instance = this._parent._createService(service)
       } else {
         instance = this._instances[name]
         if (!instance) {
@@ -57,7 +56,7 @@ export default class ServiceProvider {
           this._instances[name] = instance
         }
       }
-    } else if (type === SCOPED) {
+    } else if (service.type === SCOPED) {
       instance = this._instances[name]
       if (!instance) {
         instance = this._instantiate(service)

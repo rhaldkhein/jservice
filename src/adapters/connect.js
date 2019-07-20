@@ -6,7 +6,7 @@ export default function (contextProto, options = {}) {
       return this.provider.serviceOrNull(name)
     },
     setter: options.setter || function (req, res, next) {
-      // this = builder
+      // this = container
       req.provider = this.createProvider()
       next()
     }

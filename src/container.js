@@ -2,18 +2,21 @@ import ServiceCollection from './collection'
 import ServiceProvider from './provider'
 import defaultAdapter from './adapters/connect'
 
-export default class Builder {
+export default class Container {
 
+  parent = null
   collection = null
   provider = null
   isReady = false
-  defaultAdapter = defaultAdapter
 
-  constructor(registry) {
+  constructor(registry, parent) {
+    this.parent = parent
     this.collection = new ServiceCollection(this)
-    this.provider = new ServiceProvider(this.collection)
+    this.provider = new ServiceProvider(this.collection, parent && parent.provider)
     this.build(registry)
   }
+
+  defaultAdapter = defaultAdapter
 
   init(adapter) {
     if (!adapter) adapter = this.defaultAdapter()
@@ -41,6 +44,10 @@ export default class Builder {
       .then(() => this.provider)
   }
 
+  createContainer(registry) {
+    return new Container(registry, this)
+  }
+
   createProvider() {
     return new ServiceProvider(this.collection, this.provider)
   }
@@ -55,8 +62,8 @@ export default class Builder {
     return results
   }
 
-  merge(builder) {
-    this.collection.merge(builder.collection)
+  merge(container) {
+    this.collection.merge(container.collection)
     return this
   }
 

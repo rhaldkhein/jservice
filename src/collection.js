@@ -2,18 +2,13 @@ import { isConstructor, isFunction, isString } from './util'
 
 export default class ServiceCollection {
 
-  types = {
-    CONCRETE: 0,
-    SINGLETON: 1,
-    SCOPED: 2,
-    TRANSIENT: 3,
-  }
-
+  container = null
   services = []
   names = {}
 
-  constructor(core) {
-    this.singleton(core, '__core__')
+  constructor(container) {
+    if (!container.parent) this.singleton(container, 'core')
+    this.container = container
   }
 
   _push(service, desc, skipIfExist) {
@@ -25,19 +20,25 @@ export default class ServiceCollection {
       if (skipIfExist) return
       // Allow override of service if name starts with `@`
       if (name[0] !== '@')
-        throw new Error(`Service "${name}" is already registered`)
+        throw new Error(`Service "${name}" is already registered or reserved`)
       this.services[index] = desc
     } else {
       if (service.singleton && desc.type !== this.types.SINGLETON)
         throw new Error(`Service "${name}" must be a singleton`)
-      desc.index = this.names[name] = this.services.length
+      this.names[name] = this.services.length
       this.services.push(desc)
     }
     // Run setup static method
     if (isFunction(service.setup)) {
-      const core = this.services[0].value()
-      service.setup(core.provider, core.collection)
+      service.setup(this.container.provider, this)
     }
+  }
+
+  get(name) {
+    let service = this.services[this.names[name]],
+      { parent } = this.container
+    if (!service && parent) service = parent.collection.get(name)
+    return service
   }
 
   configure(name, config) {
@@ -98,4 +99,11 @@ export default class ServiceCollection {
     }
   }
 
+}
+
+ServiceCollection.prototype.types = {
+  CONCRETE: 0,
+  SINGLETON: 1,
+  SCOPED: 2,
+  TRANSIENT: 3,
 }
