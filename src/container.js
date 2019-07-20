@@ -16,10 +16,8 @@ export default class Container {
     this.build(registry)
   }
 
-  defaultAdapter = defaultAdapter
-
   init(adapter) {
-    if (!adapter) adapter = this.defaultAdapter()
+    if (!adapter) adapter = defaultAdapter()
     adapter.proto.serviceOrNull = adapter.getter
     adapter.proto.service = function (name) {
       const service = this.serviceOrNull(name)
