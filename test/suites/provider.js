@@ -1,5 +1,5 @@
-const Builder = require('../../lib')
-const { ServiceProvider } = Builder
+const Container = require('../../lib')
+const { ServiceProvider } = Container
 
 describe('provider', () => {
 
@@ -9,44 +9,80 @@ describe('provider', () => {
     SingletonService
   } = global.services
 
-  it('correct service arguments', (done) => {
+  it('custom dependency', (done) => {
+    const hello = { a: 1 }
+    const world = { b: 2 }
+    function ZooService(provider) {
+      const helloService = provider.service('hello')
+      const singleton = provider.service('singleton')
+      expect(provider).to.be.instanceOf(ServiceProvider)
+      expect(helloService).to.be.equal(hello)
+      expect(singleton).to.be.instanceOf(SingletonService)
+    }
+    ZooService.service = 'zoo'
+
+    function YooService(provider) {
+      const worldService = provider.service('world')
+      const singleton = provider.service('singleton')
+      expect(worldService).to.be.equal(world)
+      expect(singleton).to.be.instanceOf(SingletonService)
+      done()
+    }
+
+    const container = new Container()
+    container.build(services => {
+      services.add(SingletonService)
+      services.add(ZooService, provider => {
+        expect(provider).to.be.instanceOf(ServiceProvider)
+        return { hello }
+      })
+    })
+
+    const subContainer = container.createContainer(services => {
+      services.add(YooService, 'yoo', provider => {
+        provider.service('zoo')
+        return { world }
+      })
+    })
+
+    subContainer.provider.service('yoo')
+  })
+
+  it('correct service arguments with config', (done) => {
     const serviceConfig = { a: 1 }
     const serviceConfigFunc = () => 'yes'
     function CustomService(provider, config) {
       expect(provider).to.be.instanceOf(ServiceProvider)
-      expect(config).to.be.equal(config)
+      expect(config).to.be.equal(serviceConfig)
     }
     function ZooService(provider, config) {
       expect(config).to.be.equal('yes')
-    }
-    function YooService(provider, config) {
-      expect(config).to.be.equal(config)
       done()
     }
-    YooService.service = 'yoo'
-    const builder = new Builder()
-    builder.build(services => {
-      services.add(CustomService, 'custom', serviceConfig)
-      services.add(ZooService, 'zoo', serviceConfigFunc)
-      services.add(YooService, serviceConfig)
+    ZooService.service = 'zoo'
+    const container = new Container()
+    container.build(services => {
+      services.add(CustomService, 'custom')
+      services.configure('custom', serviceConfig)
+      services.add(ZooService)
+      services.configure(ZooService, serviceConfigFunc)
     })
-    builder.provider.get('custom')
-    builder.provider.get('zoo')
-    builder.provider.get('yoo')
+    container.provider.get('custom')
+    container.provider.get('zoo')
   })
 
   it('correct instance keys', () => {
-    const builder = new Builder()
+    const container = new Container()
     // Function variable
     const FuncService = function () { }
     // Function pure
     function HelloService() { }
     // Build
-    builder.build(services => {
+    container.build(services => {
       services.singleton(FuncService, 'func')
       services.singleton(HelloService, 'hello')
     })
-    const { provider } = builder
+    const { provider } = container
     provider.service('func')
     provider.service('hello')
     expect(provider._instances.func).to.exist
@@ -54,11 +90,11 @@ describe('provider', () => {
   })
 
   it('get singleton service', () => {
-    const builder = new Builder()
+    const container = new Container()
     const anonValue = { anon: 'Anonymous' }
     const anonLambda = () => anonValue
     const consFunc = function () { }
-    builder.build(services => {
+    container.build(services => {
       // Constructors
       services.singleton(SingletonService)
       services.singleton(consFunc, 'consfunc')
@@ -67,7 +103,7 @@ describe('provider', () => {
       // Lambda (non contructor function)
       services.singleton(anonLambda, 'anon')
     })
-    const { provider } = builder
+    const { provider } = container
     const singletonA = provider.service('singleton')
     const singletonB = provider.service('singleton')
     const ultramanA = provider.service('ultra')
@@ -82,15 +118,15 @@ describe('provider', () => {
   })
 
   it('get scoped service', () => {
-    const builder = new Builder()
-    builder.build(services => {
+    const container = new Container()
+    container.build(services => {
       services.scoped(ScopedService)
     })
-    const { provider } = builder;
+    const { provider } = container;
     // Singleton should not get scoped or transient
     (() => provider.service('scoped')).should.throw(Error)
-    const scopedProviderA = builder.createProvider()
-    const scopedProviderB = builder.createProvider()
+    const scopedProviderA = container.createProvider()
+    const scopedProviderB = container.createProvider()
     // 1st scope
     const scopedAA = scopedProviderA.service('scoped')
     const scopedAB = scopedProviderA.service('scoped')
@@ -101,15 +137,15 @@ describe('provider', () => {
   })
 
   it('get transient service', () => {
-    const builder = new Builder()
-    builder.build(services => {
+    const container = new Container()
+    container.build(services => {
       services.transient(TransientService)
     })
-    const { provider } = builder;
+    const { provider } = container;
     // Singleton should not get scoped or transient
     (() => provider.service('transient')).should.throw(Error)
-    const scopedProviderA = builder.createProvider()
-    const scopedProviderB = builder.createProvider()
+    const scopedProviderA = container.createProvider()
+    const scopedProviderB = container.createProvider()
     // 1st scope
     const tranAA = scopedProviderA.service('transient')
     const tranAB = scopedProviderA.service('transient')
@@ -120,38 +156,38 @@ describe('provider', () => {
   })
 
   it('get optional service', () => {
-    const builder = new Builder()
-    builder.build(services => {
+    const container = new Container()
+    container.build(services => {
       services.singleton(SingletonService)
     })
-    const nothing = builder.provider.serviceOrNull('nothing')
-    const singleton = builder.provider.serviceOrNull('singleton')
+    const nothing = container.provider.serviceOrNull('nothing')
+    const singleton = container.provider.serviceOrNull('singleton')
     expect(nothing).to.not.exist
     expect(singleton).to.exist
   })
 
   it('get required service', () => {
-    const builder = new Builder()
-    const provider = builder.provider;
+    const container = new Container()
+    const provider = container.provider;
     (() => provider.service('nothing')).should.throw(Error)
   })
 
   it('get service from parent', () => {
-    const builder = new Builder()
-    builder.build(services => {
+    const container = new Container()
+    container.build(services => {
       services.singleton(SingletonService)
     })
-    const scopedProvider = builder.createProvider()
+    const scopedProvider = container.createProvider()
     const singleton = scopedProvider.service('singleton')
     expect(singleton).to.be.instanceOf(SingletonService)
   })
 
   it('get service using shorthand', () => {
-    const builder = new Builder()
-    builder.build(services => {
+    const container = new Container()
+    container.build(services => {
       services.singleton(SingletonService)
     })
-    const scopedProvider = builder.createProvider()
+    const scopedProvider = container.createProvider()
     const singleton = scopedProvider.get('singleton')
     const nothing = scopedProvider.getOrNull('nothing')
     expect(singleton).to.be.instanceOf(SingletonService)

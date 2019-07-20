@@ -1,4 +1,4 @@
-const Builder = require('../../lib')
+const Container = require('../../lib')
 const connectAdapter = require('../../lib/adapters/connect').default
 const koaAdapter = require('../../lib/adapters/koa').default
 
@@ -9,10 +9,10 @@ describe('middlewares', () => {
   } = global.services
 
   it('connect adapter', () => {
-    const builder = new Builder()
-    builder.collection.singleton(SingletonService)
+    const container = new Container()
+    container.collection.singleton(SingletonService)
     let proto = {}
-    const middleware = builder.init(
+    const middleware = container.init(
       connectAdapter(proto)
     )
     expect(middleware).to.be.a('function')
@@ -24,10 +24,10 @@ describe('middlewares', () => {
   })
 
   it('koa adapter', () => {
-    const builder = new Builder()
-    builder.collection.singleton(SingletonService)
+    const container = new Container()
+    container.collection.singleton(SingletonService)
     let proto = {}
-    const middleware = builder.init(
+    const middleware = container.init(
       koaAdapter(proto)
     )
     expect(middleware).to.be.a('function')

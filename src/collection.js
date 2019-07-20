@@ -2,7 +2,7 @@ import { isConstructor, isFunction, isString } from './util'
 
 export default class ServiceCollection {
 
-  container = null
+  // container = null
   services = []
   names = {}
 
@@ -48,17 +48,17 @@ export default class ServiceCollection {
     this.services[index].config = config
   }
 
-  add(service, name, config) {
-    this.singleton(service, name, config)
+  add(service, name, deps) {
+    this.singleton(service, name, deps)
   }
 
-  singleton(service, name, config) {
+  singleton(service, name, deps) {
     if (!service) return
     if (!isString(name)) {
-      config = name
+      deps = name
       name = null
     }
-    let desc = { name, config }
+    let desc = { name, deps }
     if (!isConstructor(service)) {
       const Service = () => service
       desc.type = this.types.CONCRETE
@@ -70,23 +70,23 @@ export default class ServiceCollection {
     this._push(service, desc)
   }
 
-  transient(service, name, config) {
+  transient(service, name, deps) {
     if (!isConstructor(service)) return
     if (!isString(name)) {
-      config = name
+      deps = name
       name = null
     }
-    let desc = { name, config, type: this.types.TRANSIENT }
+    let desc = { name, deps, type: this.types.TRANSIENT }
     this._push(service, desc)
   }
 
-  scoped(service, name, config) {
+  scoped(service, name, deps) {
     if (!isConstructor(service)) return
     if (!isString(name)) {
-      config = name
+      deps = name
       name = null
     }
-    let desc = { name, config, type: this.types.SCOPED }
+    let desc = { name, deps, type: this.types.SCOPED }
     this._push(service, desc)
   }
 

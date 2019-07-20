@@ -29,6 +29,6 @@ glob.sync('./lib/**/*.js').forEach(function (file) {
 
 glob.sync('./test/suites/**/*.js').forEach(function (file) {
   // Test only, comment to include all test suites
-  // if (file.indexOf('container') === -1) return
+  // if (file.indexOf('provider') === -1) return
   require(path.resolve(file))
 })
