@@ -1,5 +1,5 @@
-const Builder = require('../../lib')
-const { ServiceCollection } = Builder
+const Container = require('../../lib')
+const { ServiceCollection } = Container
 
 describe('collection', () => {
 
@@ -7,12 +7,11 @@ describe('collection', () => {
     TransientService,
     ScopedService,
     SingletonService,
-    FooService,
-    BarService,
+    FooService
   } = global.services
 
   it('add services with minimum arguments', () => {
-    new Builder().build(services => {
+    new Container().build(services => {
       services.should.be.instanceOf(ServiceCollection)
       services.transient(TransientService)
       services.scoped(ScopedService)
@@ -28,14 +27,14 @@ describe('collection', () => {
   })
 
   it('add services with different name', () => {
-    const builder = new Builder()
-    builder.build(services => {
+    const container = new Container()
+    container.build(services => {
       services.transient(TransientService, 'xtransient')
       services.scoped(ScopedService, 'xscoped')
       services.singleton(SingletonService, 'xsingleton')
       services.add(FooService, 'xfoo')
     })
-    const { collection: col } = builder
+    const { collection: col } = container
     const transient = col.services[col.names['xtransient']].value
     const scoped = col.services[col.names['xscoped']].value
     const singleton = col.services[col.names['xsingleton']].value
@@ -44,55 +43,46 @@ describe('collection', () => {
     expect(singleton).to.equal(SingletonService)
   })
 
-  it('add services and check types with config ', () => {
-    const builder = new Builder()
-    const fooConfig = { a: 1 }
-    builder.build(services => {
-      services.transient(TransientService, () => null)
-      services.scoped(ScopedService, () => null)
-      services.singleton(SingletonService, () => null)
+  it('add services and check types', () => {
+    const container = new Container()
+    container.build(services => {
+      services.transient(TransientService)
+      services.scoped(ScopedService)
+      services.singleton(SingletonService)
       services.singleton({ ultra: 'man' }, 'ultra')
-      services.add(FooService, () => null)
-      services.add(BarService, fooConfig)
+      services.add(FooService)
     })
-    const { collection: col } = builder
+    const { collection: col } = container
     const transient = col.services[col.names['transient']]
     const scoped = col.services[col.names['scoped']]
     const singleton = col.services[col.names['singleton']]
     const ultra = col.services[col.names['ultra']]
     const foo = col.services[col.names['foo']]
-    const bar = col.services[col.names['bar']]
     // Types
     expect(transient.type).to.be.equal(col.types.TRANSIENT)
     expect(scoped.type).to.be.equal(col.types.SCOPED)
     expect(singleton.type).to.be.equal(col.types.SINGLETON)
     expect(ultra.type).to.be.equal(col.types.CONCRETE)
     expect(foo.type).to.be.equal(col.types.SINGLETON)
-    // Config
-    expect(transient.config).to.be.a('function')
-    expect(scoped.config).to.be.a('function')
-    expect(singleton.config).to.be.a('function')
-    expect(foo.config).to.be.a('function')
-    expect(bar.config).to.be.equal(fooConfig)
   })
 
   it('replace service', () => {
-    const builder = new Builder()
+    const container = new Container()
     function ReplacableService() { }
     ReplacableService.service = '@replacable'
     function NewService() { }
     NewService.service = '@replacable'
-    builder.build(services => {
+    container.build(services => {
       services.transient(ReplacableService, () => null)
       services.transient(NewService, () => null)
     })
-    expect(builder.collection.services.length).to.be.equal(2)
-    expect(builder.collection.services[1].value).to.be.equal(NewService)
+    expect(container.collection.services.length).to.be.equal(2)
+    expect(container.collection.services[1].value).to.be.equal(NewService)
   })
 
   it('configure services', () => {
-    const builder = new Builder()
-    builder.build(services => {
+    const container = new Container()
+    container.build(services => {
       services.singleton(SingletonService)
       services.transient(TransientService)
       // By constructor
@@ -100,7 +90,7 @@ describe('collection', () => {
       // By name
       services.configure(TransientService, () => null)
     })
-    const { collection: col } = builder
+    const { collection: col } = container
     const singleton = col.services[col.names['singleton']]
     const transient = col.services[col.names['transient']]
     expect(singleton.config).to.be.a('function')
@@ -108,10 +98,10 @@ describe('collection', () => {
   })
 
   it('run setup method', (done) => {
-    const builder = new Builder()
+    const container = new Container()
     function CustomService() { }
     CustomService.setup = () => { done() }
-    builder.collection.singleton(CustomService, 'custom')
+    container.collection.singleton(CustomService, 'custom')
   })
 
 })
