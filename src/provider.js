@@ -29,21 +29,19 @@ export default class ServiceProvider {
   }
 
   serviceOrNull(name) {
-    name = name.toLowerCase()
-    const instance = this._instances[name]
-    if (instance) return instance
-    const service = this._collection.get(name)
-    if (service === undefined) return null
-    return this._createService(service)
+    return this._createService(name.toLowerCase())
   }
 
-  _createService(service) {
-    let instance, { name } = service
-
+  _createService(name) {
     // CONCRETE: 0
     // SINGLETON: 1
     // SCOPED: 2
     // TRANSIENT: 3
+
+    let instance = this._instances[name]
+    if (instance) return instance
+    const service = this._collection.get(name)
+    if (service === undefined) return null
 
     // Validate resolution, singleton must not resolve scoped or transient.
     // If `this._parent` exists, means that, this provider is a scoped.
@@ -53,10 +51,9 @@ export default class ServiceProvider {
 
     // No instance create one
     if (service.type <= 1) {
-      if (this._parent) {
-        // Use parent instead
-        instance = this._parent._createService(service)
-      } else {
+      if (this._parent)
+        instance = this._parent._createService(name)
+      if (!instance) {
         instance = this._instantiate(service)
         this._instances[name] = instance
       }
