@@ -1,7 +1,7 @@
 const Koa = require('koa')
 const JService = require('../lib')
 const registry = require('./services/registry')
-const { default: koaAdapter } = require('../lib/adapters/koa')
+const { koaAdapter } = require('../lib/adapters')
 
 const app = new Koa()
 const port = 3000

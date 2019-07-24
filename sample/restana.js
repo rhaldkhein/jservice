@@ -1,11 +1,15 @@
 const rastana = require('restana')
 const JService = require('../lib')
 const registry = require('./services/registry')
+const { connectAdapter } = require('../lib/adapters')
+const { IncomingMessage } = require('http')
 
 const service = rastana({})
 const jservice = new JService(registry)
 
-service.use(jservice.init())
+service.use(jservice.init(
+  connectAdapter(IncomingMessage.prototype)
+))
 
 service.get('/', (req, res) => {
   const singlA = req.service('singleton')

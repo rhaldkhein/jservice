@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/rhaldkhein/jservice.svg?branch=master)](https://travis-ci.org/rhaldkhein/jservice) [![codecov](https://codecov.io/gh/rhaldkhein/jservice/branch/master/graph/badge.svg)](https://codecov.io/gh/rhaldkhein/jservice)
 
-A small and powerful **pure javascript** DI container that favors code over configuration, less opinionated, no automatic resolution, and with scoping such as Singleton, Scoped and Transient. It can also easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
+A small and powerful **pure javascript** DI container that is less oppinionated, no automatic dependency resolution, and with dependency scoping such as Singleton, Scoped and Transient. Can easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
 
-#### Code Over Configuration
+#### Manual Resolution
 
-Does NOT require you to configure which dependencies to resolve in advance and inject into your function or class, but instead, it only inject service provider. It's a manual resolution that gives you quicker and flexible dependency injection.
+Does NOT require to configure which dependencies to resolve automatically into the function or class, but instead, only a provider is injected but can resolve multiple services. It's a manual resolution but gives you quicker and flexible dependency injection.
 
 #### Dependency Scoping
 
@@ -27,7 +27,7 @@ npm install jservice
 
 ## Basic Usage
 
-Using the core builder, without a web framework.
+Using the core container without a web framework.
 
 ```javascript
 var JService = require('jservice')
@@ -62,12 +62,16 @@ var JService = require('jservice')
 var express = require('express')
 var app = express()
 var registry = require('./registry')
+var { connectAdapter } = require('jservice/adapters')
+var { IncomingMessage } = require('http')
 
 // Create container with registry function
 var jservice = JService.create(registry)
 
 // Infuse jservice to express
-app.use(jservice.init())
+app.use(jservice.init(
+  connectAdapter(IncomingMessage.prototype)
+))
 
 // Signup endpoint
 app.post('/signup', (req, res) => {
@@ -89,9 +93,9 @@ jservice.start().then(() => app.listen(3000))
 
 ## Creating Services
 
-A service can be a class, function constructor, or concrete object. You basically don't need to do or set anything on the service. However, there are some options you can take, like explicitly putting the name and hook to startup lifecycle.
+A service can be a class, function constructor, or concrete object. You basically don't need to do or set anything in the service. However, there are some options you can do, like explicitly putting the name and hook to startup events.
 
-Basic ES5 service `user.js`, with no name and hooks (pure service).
+Basic ES5 service `user.js`, with no name and hooks (vanilla service).
 
 ```javascript
 function User(provider) {
@@ -117,9 +121,9 @@ class Database {
   constructor(provider) {
     this.User = mongoose.model('User', { name: String, password: String })
   }
-  // Hook to start lifecycle
+  // Hook to start event
   static start(provider) {
-    // Wait to connect before invoking `ready` lifecycle
+    // Wait to connect before invoking `ready` hook
     return mongoose.connect('mongodb://localhost:27017/test')
   }
   // ... more hooks

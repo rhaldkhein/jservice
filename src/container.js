@@ -1,12 +1,8 @@
 import ServiceCollection from './collection'
 import ServiceProvider from './provider'
-import defaultAdapter from './adapters/connect'
 
 export default class Container {
 
-  parent = null
-  collection = null
-  provider = null
   isReady = false
 
   constructor(registry, parent) {
@@ -17,7 +13,6 @@ export default class Container {
   }
 
   init(adapter) {
-    if (!adapter) adapter = defaultAdapter()
     adapter.proto.serviceOrNull = adapter.getter
     adapter.proto.service = function (name) {
       const service = this.serviceOrNull(name)

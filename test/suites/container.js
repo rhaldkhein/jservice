@@ -118,9 +118,8 @@ describe('container', () => {
 
   it('events', (done) => {
     function EventService() { }
-    EventService.setup = (provider, services) => {
-      expect(provider).to.be.instanceOf(ServiceProvider)
-      expect(services).to.be.instanceOf(ServiceCollection)
+    EventService.setup = (container) => {
+      expect(container).to.be.instanceOf(Container)
     }
     EventService.start = provider => {
       expect(provider).to.be.instanceOf(ServiceProvider)

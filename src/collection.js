@@ -2,7 +2,6 @@ import { isConstructor, isFunction, isString } from './util'
 
 export default class ServiceCollection {
 
-  // container = null
   services = []
   names = {}
 
@@ -29,9 +28,7 @@ export default class ServiceCollection {
       this.services.push(desc)
     }
     // Run setup static method
-    if (isFunction(service.setup)) {
-      service.setup(this.container.provider, this)
-    }
+    if (isFunction(service.setup)) service.setup(this.container)
   }
 
   get(name) {
