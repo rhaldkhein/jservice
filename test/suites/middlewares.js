@@ -1,6 +1,5 @@
 const Container = require('../../lib')
-const connectAdapter = require('../../lib/adapters/connect').default
-const koaAdapter = require('../../lib/adapters/koa').default
+const { connectAdapter, koaAdapter } = require('../../lib/adapters')
 
 describe('middlewares', () => {
 

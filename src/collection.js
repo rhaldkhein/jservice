@@ -2,7 +2,6 @@ import { isConstructor, isFunction, isString } from './util'
 
 export default class ServiceCollection {
 
-  // container = null
   services = []
   names = {}
 

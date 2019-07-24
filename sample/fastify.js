@@ -1,10 +1,14 @@
 const JService = require('../lib')
 const registry = require('./services/registry')
+const { connectAdapter } = require('../lib/adapters')
+const { IncomingMessage } = require('http')
 
 const fastify = require('fastify')()
 
 const jservice = new JService(registry)
-fastify.use(jservice.init())
+fastify.use(jservice.init(
+  connectAdapter(IncomingMessage.prototype)
+))
 
 // Declare a route
 fastify.get('/', function (request, reply) {

@@ -19,7 +19,7 @@ Object.assign(TransientService, {
   // singleton: true,
 
   // Triggers when this service is added
-  setup: provider => {
+  setup: ({ provider }) => {
     const sing = provider.service('singleton')
     // Do something with `sing`
     sing.sayHello()

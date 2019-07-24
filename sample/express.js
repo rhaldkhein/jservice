@@ -1,12 +1,16 @@
 const express = require('express')
 const JService = require('../lib')
 const registry = require('./services/registry')
+const { connectAdapter } = require('../lib/adapters')
+const { IncomingMessage } = require('http')
 
 const app = express()
 const port = 3000
 const jservice = new JService(registry)
 
-app.use(jservice.init())
+app.use(jservice.init(
+  connectAdapter(IncomingMessage.prototype)
+))
 
 app.get('/', (req, res) => {
   const singlA = req.service('singleton')

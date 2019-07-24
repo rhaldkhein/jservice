@@ -2,10 +2,6 @@ import { isFunction, isConstructor } from './util'
 
 export default class ServiceProvider {
 
-  // _collection = null
-  // _instances = null
-  // _parent = null
-
   constructor(collection, parentProvider, instances) {
     this._collection = collection
     this._parent = parentProvider
