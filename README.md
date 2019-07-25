@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rhaldkhein/jservice.svg?branch=master)](https://travis-ci.org/rhaldkhein/jservice) [![codecov](https://codecov.io/gh/rhaldkhein/jservice/branch/master/graph/badge.svg)](https://codecov.io/gh/rhaldkhein/jservice)
 
-A small and powerful **pure javascript** DI container that is less oppinionated, no automatic dependency resolution, and with dependency scoping such as Singleton, Scoped and Transient. Can easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
+A small and powerful **pure javascript** DI container that is non-opinionated, no automatic dependency resolution, with dependency scoping such as Singleton, Scoped and Transient. Can easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
 
 #### Manual Resolution
 
@@ -13,6 +13,10 @@ Does NOT require to configure which dependencies to resolve automatically into t
 - *Singleton* - services are the same across providers
 - *Scoped* - services are the same within the provider but different on another instance of provider
 - *Transient* - services are always different even within the same provider
+
+#### Container Clustering
+
+Build up a sub-containers that inherits the dependecies from the parent container. The sub-container can also hold its own dependency collection that is not accessable from parent container.
 
 #### Integrate with Node Web Frameworks
 
