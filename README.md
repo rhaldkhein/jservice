@@ -18,6 +18,10 @@ Does NOT require to configure which dependencies to resolve automatically into t
 
 Build up a sub-containers that inherits dependecies from parent container. The sub-container can also hold its own dependency collection that is not accessable from parent container.
 
+#### Dependency Declaration & Configuration
+
+Can isolate dependency declaration and configuration into a single file. Giving more control and ensure that no implicit dependencies are leaked in.
+
 #### Integrate with Node Web Frameworks
 
 Directly infuse web frameworks with dependency injection without changing the middleware's function signature.
