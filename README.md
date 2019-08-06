@@ -2,17 +2,25 @@
 
 [![Build Status](https://travis-ci.org/rhaldkhein/jservice.svg?branch=master)](https://travis-ci.org/rhaldkhein/jservice) [![codecov](https://codecov.io/gh/rhaldkhein/jservice/branch/master/graph/badge.svg)](https://codecov.io/gh/rhaldkhein/jservice)
 
-A small and powerful **pure javascript** DI container that is less oppinionated, no automatic dependency resolution, and with dependency scoping such as Singleton, Scoped and Transient. Can easily integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
+A small and powerful **pure javascript** DI container that is non-opinionated, no automatic dependency resolution, with dependency scoping such as Singleton, Scoped and Transient. Can optionally integrate with any Node web frameworks that supports middleware, like Express, Koa, Fasify, etc.
 
 #### Manual Resolution
 
-Does NOT require to configure which dependencies to resolve automatically into the function or class, but instead, only a provider is injected but can resolve multiple services. It's a manual resolution but gives you quicker and flexible dependency injection.
+Does NOT require to configure which dependencies to resolve automatically into the function or class, but instead, only a provider is injected that can resolve multiple services. It's like manual resolution, but gives quicker and flexible dependency injection.
 
 #### Dependency Scoping
 
 - *Singleton* - services are the same across providers
 - *Scoped* - services are the same within the provider but different on another instance of provider
 - *Transient* - services are always different even within the same provider
+
+#### Container Clustering
+
+Build up a sub-containers that inherits dependecies from parent container. The sub-container can also hold its own dependency collection that is not accessable from parent container.
+
+#### Dependency Declaration & Configuration
+
+Can isolate dependency declaration and configuration into a single file. Giving more control and ensure that no implicit dependencies are leaked in.
 
 #### Integrate with Node Web Frameworks
 
