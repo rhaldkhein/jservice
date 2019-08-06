@@ -15,6 +15,7 @@ describe('provider', () => {
       services.singleton(SingletonService)
       services.scoped(ScopedService)
       services.transient(TransientService)
+      services.add(() => ({ fat: 'arrow' }), 'fat')
     })
 
     const singA = container.provider.service('singleton')
@@ -25,6 +26,9 @@ describe('provider', () => {
     const containerA = container.createContainer()
     const singC = containerA.provider.service('singleton')
     expect(singC).to.be.equal(singA)
+
+    const fatService = container.provider.service('fat')
+    expect(fatService && fatService.fat).to.be.equal('arrow')
 
   })
 
@@ -67,26 +71,39 @@ describe('provider', () => {
   })
 
   it('correct service arguments with config', (done) => {
+    // Service 1
     const serviceConfig = { a: 1 }
     const serviceConfigFunc = () => 'yes'
     function CustomService(provider, config) {
       expect(provider).to.be.instanceOf(ServiceProvider)
       expect(config).to.be.equal(serviceConfig)
     }
+    // Service 2
     function ZooService(provider, config) {
       expect(config).to.be.equal('yes')
-      done()
     }
     ZooService.service = 'zoo'
+    // Service 3
+    const booConfig = { a: 1 }
+    const Boo = (provider, config) => {
+      expect(provider).to.be.instanceOf(ServiceProvider)
+      expect(config).to.be.equal(booConfig)
+      done()
+      return { boo: 'boo' }
+    }
+    // Container
     const container = new Container()
     container.build(services => {
       services.add(CustomService, 'custom')
       services.configure('custom', serviceConfig)
       services.add(ZooService)
       services.configure(ZooService, serviceConfigFunc)
+      services.add(Boo, 'boo')
+      services.configure('boo', booConfig)
     })
     container.provider.get('custom')
     container.provider.get('zoo')
+    container.provider.get('boo')
   })
 
   it('correct instance keys', () => {
@@ -131,7 +148,7 @@ describe('provider', () => {
     expect(singletonA).to.be.instanceOf(SingletonService)
     expect(singletonB).to.be.equal(singletonA)
     expect(ultramanB).to.be.equal(ultramanA)
-    expect(anonA).to.be.equal(anonLambda)
+    expect(anonA).to.be.equal(anonValue)
     expect(consfuncA).to.be.instanceOf(consFunc)
   })
 
