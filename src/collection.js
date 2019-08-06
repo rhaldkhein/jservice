@@ -1,4 +1,4 @@
-import { isConstructor, isFunction, isString } from './util'
+import { isFunction, isString } from './util'
 
 export default class ServiceCollection {
 
@@ -39,7 +39,7 @@ export default class ServiceCollection {
   }
 
   configure(name, config) {
-    const index = this.names[isConstructor(name) ? name.service : name]
+    const index = this.names[isFunction(name) ? name.service : name]
     if (index === undefined)
       throw new Error(`Unable to configure unregistered service "${name}"`)
     this.services[index].config = config
@@ -56,7 +56,7 @@ export default class ServiceCollection {
       name = null
     }
     let desc = { name, deps }
-    if (!isConstructor(service)) {
+    if (!isFunction(service)) {
       const Service = () => service
       desc.type = this.types.CONCRETE
       desc.typeof = typeof service
@@ -68,7 +68,7 @@ export default class ServiceCollection {
   }
 
   transient(service, name, deps) {
-    if (!isConstructor(service)) return
+    if (!isFunction(service)) throw new Error('Transient service must be a function or class')
     if (!isString(name)) {
       deps = name
       name = null
@@ -78,7 +78,7 @@ export default class ServiceCollection {
   }
 
   scoped(service, name, deps) {
-    if (!isConstructor(service)) return
+    if (!isFunction(service)) throw new Error('Scoped service must be a function or class')
     if (!isString(name)) {
       deps = name
       name = null
