@@ -79,17 +79,17 @@ describe('provider', () => {
       expect(config).to.be.equal(serviceConfig)
     }
     // Service 2
-    function ZooService(provider, config) {
+    function ZooService(provider, config, desc) {
       expect(config.a).to.be.equal('yes')
-      expect(config.name).to.be.equal('zoonew')
+      expect(desc.name).to.be.equal('zoonew')
     }
     ZooService.service = 'zoo'
     // Service 3
     const booConfig = { a: 1 }
-    const Boo = (provider, config) => {
+    const Boo = (provider, config, desc) => {
       expect(provider).to.be.instanceOf(ServiceProvider)
       expect(config).to.be.equal(booConfig)
-      expect(config.name).to.be.equal('boo')
+      expect(desc.name).to.be.equal('boo')
       done()
       return { boo: 'boo' }
     }
