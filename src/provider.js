@@ -1,4 +1,4 @@
-import { isFunction, isConstructor } from './util'
+import { isFunction, isConstructor, isObject } from './util'
 
 export default class ServiceProvider {
 
@@ -76,7 +76,9 @@ export default class ServiceProvider {
     // const Service = service.value
     const { config, value: Service } = service
     const provider = this._createServiceProvider(service)
-    const objConfig = isFunction(config) ? config(this) : config
+    const objConfig = (isFunction(config) ? config(this) : config) || {}
+    if (!isObject(objConfig)) throw new Error('Service\'s config must be object')
+    objConfig.name = service.name
     return isConstructor(Service) ?
       new Service(provider, objConfig) :
       Service(provider, objConfig)

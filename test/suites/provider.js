@@ -73,14 +73,15 @@ describe('provider', () => {
   it('correct service arguments with config', (done) => {
     // Service 1
     const serviceConfig = { a: 1 }
-    const serviceConfigFunc = () => 'yes'
+    const serviceConfigFunc = () => ({ a: 'yes' })
     function CustomService(provider, config) {
       expect(provider).to.be.instanceOf(ServiceProvider)
       expect(config).to.be.equal(serviceConfig)
     }
     // Service 2
     function ZooService(provider, config) {
-      expect(config).to.be.equal('yes')
+      expect(config.a).to.be.equal('yes')
+      expect(config.name).to.be.equal('zoonew')
     }
     ZooService.service = 'zoo'
     // Service 3
@@ -88,6 +89,7 @@ describe('provider', () => {
     const Boo = (provider, config) => {
       expect(provider).to.be.instanceOf(ServiceProvider)
       expect(config).to.be.equal(booConfig)
+      expect(config.name).to.be.equal('boo')
       done()
       return { boo: 'boo' }
     }
@@ -96,13 +98,13 @@ describe('provider', () => {
     container.build(services => {
       services.add(CustomService, 'custom')
       services.configure('custom', serviceConfig)
-      services.add(ZooService)
-      services.configure(ZooService, serviceConfigFunc)
+      services.add(ZooService, 'zoonew')
+      services.configure('zoonew', serviceConfigFunc)
       services.add(Boo, 'boo')
       services.configure('boo', booConfig)
     })
     container.provider.get('custom')
-    container.provider.get('zoo')
+    container.provider.get('zoonew')
     container.provider.get('boo')
   })
 
