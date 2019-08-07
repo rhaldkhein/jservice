@@ -1,8 +1,4 @@
 
-export function isObject(val) {
-  return val !== null && typeof val === 'object'
-}
-
 export function isString(str) {
   return typeof str === 'string'
 }
