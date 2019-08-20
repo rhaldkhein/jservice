@@ -60,4 +60,8 @@ export default class Container {
     return this
   }
 
+  set strict(val) {
+    this.collection.strict = val
+  }
+
 }

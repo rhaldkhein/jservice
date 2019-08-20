@@ -4,22 +4,26 @@ export default class ServiceCollection {
 
   services = []
   names = {}
+  strict = false
 
   constructor(container) {
     if (!container.parent) this.singleton(container, 'core')
     this.container = container
   }
 
-  _push(service, desc, skipIfExist) {
+  _push(service, desc, opt = {}) {
     const name = desc.name = (desc.name || service.service || '').toLowerCase()
     if (!name) throw new Error('Service must have a name')
     const index = this.names[name]
     desc.value = service
     if (index > -1) {
-      if (skipIfExist) return
-      // Allow override of service if name starts with `@`
-      if (name[0] !== '@')
-        throw new Error(`Service "${name}" is already registered or reserved`)
+      // Duplicate found, allow override of service if name starts with `@`
+      if (name[0] !== '@') {
+        // If not `@`, do something or throw error
+        if (this.strict || opt.strict)
+          throw new Error(`Service "${name}" is already registered or reserved`)
+        return
+      }
       this.services[index] = desc
     } else {
       if (service.singleton && desc.type !== this.types.SINGLETON)
@@ -91,7 +95,7 @@ export default class ServiceCollection {
     for (const key in col.names) {
       if (col.names.hasOwnProperty(key)) {
         const service = col.services[col.names[key]]
-        this._push(service.value, service, true)
+        this._push(service.value, service)
       }
     }
   }
