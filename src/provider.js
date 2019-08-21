@@ -37,7 +37,7 @@ export default class ServiceProvider {
     let instance = this._instances[name]
     if (instance) return instance
     const service = this._collection.get(name)
-    if (service === undefined) return null
+    if (service === undefined || !service.enabled) return null
 
     // Validate resolution, singleton must not resolve scoped or transient.
     // If `this._parent` exists, means that, this provider is a scoped.

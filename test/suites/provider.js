@@ -231,4 +231,25 @@ describe('provider', () => {
     expect(nothing).to.not.exist
   })
 
+  it('disabled services', () => {
+
+    const container = new Container()
+    container.build(services => {
+      services.singleton(SingletonService)
+      services.enable(SingletonService, false)
+    })
+    const { provider } = container;
+    (() => provider.get('singleton')).should.throw(Error)
+    const sing = provider.getOrNull('singleton')
+    expect(sing).to.equal(null)
+
+    // Re-enable service
+    container.build(services => {
+      services.enable(SingletonService)
+    })
+    const singB = provider.get('singleton')
+    expect(singB).to.exist
+
+  })
+
 })
