@@ -217,6 +217,74 @@ npm install
 npm run sample
 ```
 
+## API
+
+### Container (JService)
+
+```javascript
+const JService = require('jservice')
+const container = JService.create() // Or "new JService()"
+```
+
+#### Properties
+
+**.collection** `Collection` - service storage (add or disable services)
+**.provider** `Provider` - service injector (get services)
+**.isReady** `Boolean` - when start method is done
+
+#### Methods
+
+**.build(registry)**
+
+Build up the container. Requires registry function that accepts the services collection.
+```javascript
+container.build(services => {
+  services.add(MyService)
+  // ...
+})
+```
+
+**.init(adapter)** | returns `middleware`
+
+Binds JService to any web frameworks that supports middleware. Check out the samples folder for supported frameworks and sample usage.
+```javascript
+const express = require('express')
+const { connectAdapter } = require('jservice')
+const { IncomingMessage } = require('http')
+const app = express()
+app.use(
+  jservice.init(
+    connectAdapter(IncomingMessage.prototype)
+  ) 
+)
+jservice.start().then(() => app.listen(3000))
+```
+
+**.start()**
+
+Starts the container, triggering all services that hooks to start event.
+
+**.createContainer()** | returns new `Container`
+
+Creates a sub-container that inherits all services from parent container.
+```javascript
+const container = JService.create()
+const subContainer = container.createContainer()
+```
+
+**.createProvider()** | return new `Provider`
+
+Create a scoped provider.
+
+
+### Collection
+
+TODO
+
+### Provider
+
+TODO
+
 ## Mocking
 
 ```javascript

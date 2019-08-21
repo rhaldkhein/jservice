@@ -104,4 +104,31 @@ describe('collection', () => {
     container.collection.singleton(CustomService, 'custom')
   })
 
+  it('error on duplicate service (strict = true)', () => {
+    const container = new Container()
+    container.strict = true
+    container.build(services => {
+      services.singleton(SingletonService);
+      (() => services.singleton(SingletonService)).should.throw(Error)
+    })
+  })
+
+  it('skip duplicate service (strict = false)', () => {
+    function TestService() { }
+    TestService.service = 'testservice'
+    function NewService() { }
+    NewService.service = 'testservice'
+
+    const container = new Container()
+    // container.strict = true (default)
+    container.build(services => {
+      services.singleton(TestService);
+      (() => services.singleton(NewService)).should.not.throw(Error)
+    })
+
+    const { collection: col } = container
+    expect(col.get('testservice').value).to.equal(TestService)
+    // And not the `NewService`
+  })
+
 })

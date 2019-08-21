@@ -4,22 +4,25 @@ export default class ServiceCollection {
 
   services = []
   names = {}
+  strict = false
 
   constructor(container) {
     if (!container.parent) this.singleton(container, 'core')
     this.container = container
   }
 
-  _push(service, desc, skipIfExist) {
+  _push(service, desc, opt = {}) {
     const name = desc.name = (desc.name || service.service || '').toLowerCase()
     if (!name) throw new Error('Service must have a name')
     const index = this.names[name]
-    desc.value = service
     if (index > -1) {
-      if (skipIfExist) return
-      // Allow override of service if name starts with `@`
-      if (name[0] !== '@')
-        throw new Error(`Service "${name}" is already registered or reserved`)
+      // Duplicate found, allow override of service if name starts with `@`
+      if (name[0] !== '@') {
+        // If not `@`, do something or throw error
+        if (this.strict || opt.strict)
+          throw new Error(`Service "${name}" is already registered or reserved`)
+        return
+      }
       this.services[index] = desc
     } else {
       if (service.singleton && desc.type !== this.types.SINGLETON)
@@ -27,22 +30,10 @@ export default class ServiceCollection {
       this.names[name] = this.services.length
       this.services.push(desc)
     }
+    desc.value = service
+    desc.enabled = true
     // Run setup static method
     if (isFunction(service.setup)) service.setup(this.container)
-  }
-
-  get(name) {
-    let service = this.services[this.names[name]],
-      { parent } = this.container
-    if (!service && parent) service = parent.collection.get(name)
-    return service
-  }
-
-  configure(name, config) {
-    const index = this.names[isFunction(name) ? name.service : name]
-    if (index === undefined)
-      throw new Error(`Unable to configure unregistered service "${name}"`)
-    this.services[index].config = config
   }
 
   add(service, name, deps) {
@@ -87,11 +78,33 @@ export default class ServiceCollection {
     this._push(service, desc)
   }
 
+  get(name) {
+    let service = this.services[this.names[name]],
+      { parent } = this.container
+    if (!service && parent) service = parent.collection.get(name)
+    return service
+  }
+
+  getOwn(name, purpose = 'get') {
+    const index = this.names[isFunction(name) ? name.service : name]
+    if (index === undefined)
+      throw new Error(`Unable to ${purpose} unregistered service "${name}"`)
+    return this.services[index]
+  }
+
+  enable(name, yes = true) {
+    this.getOwn(name, 'enable/disable').enabled = !!yes
+  }
+
+  configure(name, config) {
+    this.getOwn(name, 'configure').config = config
+  }
+
   merge(col) {
     for (const key in col.names) {
       if (col.names.hasOwnProperty(key)) {
         const service = col.services[col.names[key]]
-        this._push(service.value, service, true)
+        this._push(service.value, service)
       }
     }
   }
