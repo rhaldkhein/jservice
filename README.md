@@ -6,7 +6,7 @@ A small and powerful **pure javascript** DI container that is non-opinionated, n
 
 #### Manual Resolution
 
-Does NOT require to configure which dependencies to resolve automatically into the function or class, but instead, only a provider is injected that can resolve multiple services. It's like manual resolution, but gives quicker and flexible dependency injection.
+Does NOT require to configure which dependencies to resolve automatically into the function or class, but instead, only a single provider that can resolve services is injected. It's like manual resolution, but gives quicker coding and flexible dependency injection.
 
 #### Dependency Scoping
 
@@ -20,9 +20,9 @@ Build up a sub-containers that inherits dependecies from parent container. The s
 
 #### Dependency Declaration & Configuration
 
-Can isolate dependency declaration and configuration into a single file. Giving more control and ensure that no implicit dependencies are leaked in.
+Isolate dependency declaration and configuration into a single file. Giving more control and ensure no implicit dependencies are leaked in.
 
-#### Integrate with Node Web Frameworks
+#### Integration with Node Web Frameworks
 
 Directly infuse web frameworks with dependency injection without changing the middleware's function signature.
 
@@ -85,7 +85,7 @@ app.use(jservice.init(
 app.post('/signup', (req, res) => {
 
   // Get the user service we registered in registry
-  var user = res.service('user')
+  var user = req.service('user')
 
   // Using the service to create new user
   user.createNewUser({
