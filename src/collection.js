@@ -1,4 +1,4 @@
-import { isFunction, isString } from './util'
+import { isFunction, isString, isClass } from './util'
 
 export default class ServiceCollection {
 
@@ -31,6 +31,7 @@ export default class ServiceCollection {
       this.services.push(desc)
     }
     desc.value = service
+    desc.klass = isClass(service)
     desc.enabled = true
     // Run setup static method
     if (isFunction(service.setup)) service.setup(this.container)

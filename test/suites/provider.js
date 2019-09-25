@@ -111,9 +111,9 @@ describe('provider', () => {
   it('correct instance keys', () => {
     const container = new Container()
     // Function variable
-    const FuncService = function () { }
+    const FuncService = function () { return { a: 1 } }
     // Function pure
-    function HelloService() { }
+    function HelloService() { return { b: 2 } }
     // Build
     container.build(services => {
       services.singleton(FuncService, 'func')
@@ -123,14 +123,16 @@ describe('provider', () => {
     provider.service('func')
     provider.service('hello')
     expect(provider._instances.func).to.exist
+    expect(provider._instances.func.a).to.equal(1)
     expect(provider._instances.hello).to.exist
+    expect(provider._instances.hello.b).to.equal(2)
   })
 
   it('get singleton service', () => {
     const container = new Container()
     const anonValue = { anon: 'Anonymous' }
     const anonLambda = () => anonValue
-    const consFunc = function () { }
+    const consFunc = function () { return anonValue }
     container.build(services => {
       // Constructors
       services.singleton(SingletonService)
@@ -151,7 +153,7 @@ describe('provider', () => {
     expect(singletonB).to.be.equal(singletonA)
     expect(ultramanB).to.be.equal(ultramanA)
     expect(anonA).to.be.equal(anonValue)
-    expect(consfuncA).to.be.instanceOf(consFunc)
+    expect(consfuncA).to.be.equal(anonValue)
   })
 
   it('get scoped service', () => {

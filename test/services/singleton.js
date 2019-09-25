@@ -1,7 +1,8 @@
 const shortid = require('shortid')
 
-const SingletonService = module.exports = function () {
-  this.id = shortid.generate()
+module.exports = class SingletonService {
+  static get service() { return 'singleton' }
+  constructor() {
+    this.id = shortid.generate()
+  }
 }
-
-SingletonService.service = 'singleton'
