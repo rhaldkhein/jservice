@@ -68,7 +68,7 @@ var { IncomingMessage } = require('http')
 // Create container with registry function
 var jservice = JService.create(registry)
 
-// Infuse jservice to express
+// Infuse jservice to express through middleware
 app.use(jservice.init(
   connectAdapter(IncomingMessage.prototype)
 ))
@@ -93,33 +93,41 @@ jservice.start().then(() => app.listen(3000))
 
 ## Creating Services
 
-A service can be a class, function constructor, or concrete object. You basically don't need to do or set anything in the service. However, there are some options you can do, like explicitly putting the name and hook to startup events.
+A service can be a class, function, or concrete object. You basically don't need to do or set anything in the service. However, there are some options you can take, like explicitly putting the name and hook to startup events.
 
-Basic ES5 service `user.js`, with no name and hooks (vanilla service).
+Basic ES5 service `user.js`, with no name and hooks using functional programming (vanilla service).
 
 ```javascript
 function User(provider) {
   // Injecting database service
-  this.db = provider.service('database')
-}
-// Create user method
-User.prototype.createNewUser = function(data) {
-  return this.db.User.create(data)
+  var db = provider.service('database')
+  // Exposed methods
+  return {
+    // Create user method
+    createNewUser: function(data) {
+      return db.User.create(data)
+    }
+  }
 }
 module.exports = User
 ```
 
-Basic ES6 service `database.js` with name and hooks.
+Basic ES6 service `database.js` with name and hooks using class.
 
 ```javascript
 import mongoose from 'mongoose'
 
 class Database {
   // Set service name
-  static service = 'database'
+  static get service() { return 'database' }
+  // or
+  // service = 'database'
 
   constructor(provider) {
-    this.User = mongoose.model('User', { name: String, password: String })
+    this.User = mongoose.model(
+      'User', 
+      { name: String, password: String }
+    )
   }
   // Hook to start event
   static start(provider) {
@@ -152,6 +160,20 @@ module.exports = services => {
   // We can also add a service multiple times but need to set different name
   services.add(Config, 'user-config')
   services.add(Config, 'database-config')
+
+  // more...
+
+  // Some services can be configured, like this
+  services.configure(Database, provider => {
+    // Here we get host and port from config
+    var { host, port } = provider.get('database-config')
+    // Or, you can also set it here
+    // var host = 'localhost'
+    // var port = 27000
+    
+    // Now, we tell database to use this
+    return { host,  port }
+  })
 }
 ```
 
