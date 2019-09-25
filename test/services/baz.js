@@ -1,7 +1,9 @@
 const shortid = require('shortid')
 
 const BazService = module.exports = function () {
-  this.id = shortid.generate()
+  return {
+    id: shortid.generate()
+  }
 }
 
 BazService.service = 'baz'

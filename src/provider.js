@@ -1,4 +1,4 @@
-import { isFunction, isConstructor } from './util'
+import { isFunction } from './util'
 
 export default class ServiceProvider {
 
@@ -74,11 +74,11 @@ export default class ServiceProvider {
 
   _instantiate(service) {
     // const Service = service.value
-    const { name, config, value: Service } = service
+    const { config, value: Service } = service
     const provider = this._createServiceProvider(service)
     const objConfig = isFunction(config) ? config(this) : config
-    const desc = { name }
-    return isConstructor(Service) ?
+    const desc = { name: service.name }
+    return service.klass ?
       new Service(provider, objConfig, desc) :
       Service(provider, objConfig, desc)
   }

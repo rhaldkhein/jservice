@@ -1,7 +1,8 @@
 const shortid = require('shortid')
 
-const ScopedService = module.exports = function () {
-  this.id = shortid.generate()
+module.exports = class ScopedService {
+  static get service() { return 'scoped' }
+  constructor() {
+    this.id = shortid.generate()
+  }
 }
-
-ScopedService.service = 'scoped'
