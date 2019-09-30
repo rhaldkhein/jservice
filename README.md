@@ -62,16 +62,13 @@ var JService = require('jservice')
 var express = require('express')
 var app = express()
 var registry = require('./registry')
-var { connectAdapter } = require('jservice/adapters')
 var { IncomingMessage } = require('http')
 
 // Create container with registry function
 var jservice = JService.create(registry)
 
 // Infuse jservice to express through middleware
-app.use(jservice.init(
-  connectAdapter(IncomingMessage.prototype)
-))
+app.use(jservice.init(IncomingMessage.prototype))
 
 // Signup endpoint
 app.post('/signup', (req, res) => {
@@ -250,35 +247,31 @@ const container = JService.create() // Or "new JService()"
 
 **.build(registry)**
 
-Build up the container. Requires registry function that accepts the services collection.
+Build up the container. Requires registry function that accepts the services `Collection`.
 ```javascript
 container.build(services => {
+  // `services` is instance of Collection
   services.add(MyService)
   // ...
 })
 ```
 
-**.init(adapter)** | returns `middleware`
+**.init(prototype, opt = {})** | returns `middleware`  
 
 Binds JService to any web frameworks that supports middleware. Check out the samples folder for supported frameworks and sample usage.
 ```javascript
 const express = require('express')
-const { connectAdapter } = require('jservice')
 const { IncomingMessage } = require('http')
 const app = express()
-app.use(
-  jservice.init(
-    connectAdapter(IncomingMessage.prototype)
-  ) 
-)
+app.use(jservice.init(IncomingMessage.prototype))
 jservice.start().then(() => app.listen(3000))
 ```
 
-**.start()**
+**.start()**  
 
 Starts the container, triggering all services that hooks to start event.
 
-**.createContainer()** | returns new `Container`
+**.createContainer()** | returns new `Container`  
 
 Creates a sub-container that inherits all services from parent container.
 ```javascript
@@ -286,18 +279,66 @@ const container = JService.create()
 const subContainer = container.createContainer()
 ```
 
-**.createProvider()** | return new `Provider`
+**.createProvider()** | return new `Provider`  
 
 Create a scoped provider.
 
 
 ### Collection
 
-TODO
+**.singleton(service, name = null, deps = null)**  
+
+Alias: `.add(...)`
+
+Adds a singleton service to collection. Can omit `name (string)` if the service contains static property `service = <name>`. Can also filter or customize dependencies available for the service using `deps (function)`
+```javascript
+services.singleton(ZooService, 'zoo', provider => {
+  return { 
+    other: provider.get('other'),
+    custom: { foo: 'bar' }
+  }
+})
+```
+**.transient(service, name = null, deps = null)**  
+
+Adds a transient mode service.
+
+**.scoped(service, name = null, deps = null)**  
+
+Adds a scoped mode service.
+
+**.configure(name, config)**  
+  
+Configure a service. The `name` can be either string or function service, to identify which service to configure. The `config` is a function.
+
+```javascript
+services.configure(Database, provider => {
+  // Get data from config service
+  const config = provider.get('config')
+  return { 
+    host: config.host, 
+    port: config.port 
+  }
+})
+```
+
+**.enable(name, yes = true)**  
+
+Enable/disable a service.
 
 ### Provider
 
-TODO
+**.service(name)**  
+
+Alias: `.get(name)`
+
+Strictly get a service. Throws error if service is not found.
+
+**.serviceOrNull(name)**  
+
+Alias: `.getOrNull(name)`
+
+Softly get a service. Will NOT throw error, but instead returns `null`.
 
 ## Mocking
 

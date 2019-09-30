@@ -12,14 +12,20 @@ export default class Container {
     this.build(registry)
   }
 
-  init(adapter) {
-    adapter.proto.serviceOrNull = adapter.getter
-    adapter.proto.service = function (name) {
+  init(proto, opt = {}) {
+    const setter = opt.setter || function (req, res, next) {
+      req.provider = this.createProvider()
+      res.constructor === Function ? res() : next()
+    }
+    proto.serviceOrNull = opt.getter || function (name) {
+      return this.provider.serviceOrNull(name)
+    }
+    proto.service = function (name) {
       const service = this.serviceOrNull(name)
       if (!service) throw new Error(`Missing service "${name}"`)
       return service
     }
-    return adapter.setter.bind(this)
+    return setter.bind(this)
   }
 
   build(registry) {
