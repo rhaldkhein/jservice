@@ -1,15 +1,12 @@
 const Koa = require('koa')
 const JService = require('../lib')
 const registry = require('./services/registry')
-const { koaAdapter } = require('../lib/adapters')
 
 const app = new Koa()
 const port = 3000
 const jservice = new JService(registry)
 
-app.use(jservice.init(
-  koaAdapter(app.context)
-))
+app.use(jservice.init(app.context))
 
 app.use(async ctx => {
   const singlA = ctx.service('singleton')
