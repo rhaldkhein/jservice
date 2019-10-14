@@ -122,7 +122,7 @@ class Database {
 
   constructor(provider) {
     this.User = mongoose.model(
-      'User', 
+      'User',
       { name: String, password: String }
     )
   }
@@ -133,7 +133,7 @@ class Database {
   }
   // ... more hooks
   // static setup(prov) { } // Trigger when service is added
-  // static ready(prov) { } // Trigger after all services have started 
+  // static ready(prov) { } // Trigger after all services have started
 }
 ```
 
@@ -167,7 +167,7 @@ module.exports = services => {
     // Or, you can also set it here
     // var host = 'localhost'
     // var port = 27000
-    
+
     // Now, we tell database to use this
     return { host,  port }
   })
@@ -256,7 +256,7 @@ container.build(services => {
 })
 ```
 
-**.init(prototype, opt = {})** | returns `middleware`  
+**.init(prototype, opt = {})** | returns `middleware`
 
 Binds JService to any web frameworks that supports middleware. Check out the samples folder for supported frameworks and sample usage.
 ```javascript
@@ -267,11 +267,11 @@ app.use(jservice.init(IncomingMessage.prototype))
 jservice.start().then(() => app.listen(3000))
 ```
 
-**.start()**  
+**.start()**
 
 Starts the container, triggering all services that hooks to start event.
 
-**.createContainer()** | returns new `Container`  
+**.createContainer()** | returns new `Container`
 
 Creates a sub-container that inherits all services from parent container.
 ```javascript
@@ -279,62 +279,72 @@ const container = JService.create()
 const subContainer = container.createContainer()
 ```
 
-**.createProvider()** | return new `Provider`  
+**.createProvider()** | return new `Provider`
 
 Create a scoped provider.
 
 
 ### Collection
 
-**.singleton(service, name = null, deps = null)**  
+**.singleton(service, name = null, deps = null)**
 
 Alias: `.add(...)`
 
 Adds a singleton service to collection. Can omit `name (string)` if the service contains static property `service = <name>`. Can also filter or customize dependencies available for the service using `deps (function)`
 ```javascript
 services.singleton(ZooService, 'zoo', provider => {
-  return { 
+  const customProvider = provider.create({
     other: provider.get('other'),
     custom: { foo: 'bar' }
-  }
+  })
+  return ZooService(customProvider)
+})
+
+// Custom 3rd party vanilla services
+servics.add(express, 'express', provider => {
+  return express()
 })
 ```
-**.transient(service, name = null, deps = null)**  
+**.transient(service, name = null, deps = null)**
 
 Adds a transient mode service.
 
-**.scoped(service, name = null, deps = null)**  
+**.scoped(service, name = null, deps = null)**
 
 Adds a scoped mode service.
 
-**.configure(name, config)**  
-  
+**.configure(name, config)**
+
 Configure a service. The `name` can be either string or function service, to identify which service to configure. The `config` is a function.
 
 ```javascript
 services.configure(Database, provider => {
   // Get data from config service
   const config = provider.get('config')
-  return { 
-    host: config.host, 
-    port: config.port 
+  return {
+    host: config.host,
+    port: config.port
   }
 })
 ```
 
-**.enable(name, yes = true)**  
+**.enable(name, yes = true)**
 
 Enable/disable a service.
 
 ### Provider
 
-**.service(name)**  
+**.create(deps)**
+
+Creates a sub (filtered) provider that only contains dependencies in `deps`
+
+**.service(name)**
 
 Alias: `.get(name)`
 
 Strictly get a service. Throws error if service is not found.
 
-**.serviceOrNull(name)**  
+**.serviceOrNull(name)**
 
 Alias: `.getOrNull(name)`
 
