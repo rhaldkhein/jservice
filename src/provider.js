@@ -68,20 +68,14 @@ export default class ServiceProvider {
     return instance
   }
 
-  _createServiceProvider(service) {
-    const { deps } = service
-    return isFunction(deps) ? this.create(deps(this)) : this
-  }
-
   _instantiate(service) {
-    // const Service = service.value
-    const { config, value: Service } = service
-    const provider = this._createServiceProvider(service)
-    const objConfig = isFunction(config) ? config(this) : config
+    const { config, value: Service, deps } = service
     const desc = { name: service.name }
+    const objConfig = isFunction(config) ? config(this) : config
+    if (deps) return deps(this, objConfig, desc)
     return service.klass ?
-      new Service(provider, objConfig, desc) :
-      Service(provider, objConfig, desc)
+      new Service(this, objConfig, desc) :
+      Service(this, objConfig, desc)
   }
 
 }

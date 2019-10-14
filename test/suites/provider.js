@@ -55,16 +55,22 @@ describe('provider', () => {
     const container = new Container()
     container.build(services => {
       services.add(SingletonService)
-      services.add(ZooService, provider => {
+      services.add(ZooService, (provider, config, service) => {
         expect(provider).to.be.instanceOf(ServiceProvider)
-        return { hello }
+        expect(service).to.exist
+        expect(config).to.equal('foo')
+        const newProv = provider.create({hello})
+        return ZooService(newProv)
       })
+      services.configure(ZooService, 'foo')
     })
 
     const subContainer = container.createContainer(services => {
-      services.add(YooService, 'yoo', provider => {
+      services.add(YooService, 'yoo', (provider, config, service) => {
         provider.service('zoo')
-        return { world }
+        expect(service.name).to.equal('yoo')
+        const newProv = provider.create({world})
+        return YooService(newProv)
       })
     })
     subContainer.provider.service('yoo')
