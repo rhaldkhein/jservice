@@ -9,6 +9,14 @@ export default class ServiceProvider {
     this._instances = instances || {}
   }
 
+  create(instances) {
+    return new ServiceProvider(
+      this._collection,
+      this._parent,
+      instances
+    )
+  }
+
   get(name) {
     return this.service(name)
   }
@@ -60,27 +68,14 @@ export default class ServiceProvider {
     return instance
   }
 
-  _createServiceProvider(service) {
-    const { deps } = service
-    if (isFunction(deps)) {
-      return new ServiceProvider(
-        this._collection,
-        this._parent,
-        deps(this))
-    } else {
-      return this
-    }
-  }
-
   _instantiate(service) {
-    // const Service = service.value
-    const { config, value: Service } = service
-    const provider = this._createServiceProvider(service)
-    const objConfig = isFunction(config) ? config(this) : config
+    const { config, value: Service, deps } = service
     const desc = { name: service.name }
+    const objConfig = isFunction(config) ? config(this) : config
+    if (deps) return deps(this, objConfig, desc)
     return service.klass ?
-      new Service(provider, objConfig, desc) :
-      Service(provider, objConfig, desc)
+      new Service(this, objConfig, desc) :
+      Service(this, objConfig, desc)
   }
 
 }
