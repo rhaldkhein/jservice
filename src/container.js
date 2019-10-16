@@ -57,7 +57,10 @@ export default class Container {
     services.forEach(service => {
       if (!service.enabled) return
       const method = service.value[event]
-      if (method) results.push(method(this.provider))
+      if (method) results.push(method(
+        this.provider,
+        this.provider._pickDesc(service)
+      ))
     })
     return results
   }
