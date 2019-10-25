@@ -36,6 +36,7 @@ export default class Container {
 
   start() {
     return Promise.all(this.invoke('start'))
+      .then(() => Promise.all(this.invoke('prepare')))
       .then(() => {
         this.isReady = true
         this.invoke('ready')
