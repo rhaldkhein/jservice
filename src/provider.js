@@ -36,6 +36,10 @@ export default class ServiceProvider {
     return this._createService(name.toLowerCase())
   }
 
+  _pickDesc({ name }) {
+    return { name }
+  }
+
   _createService(name) {
     // CONCRETE: 0
     // SINGLETON: 1
@@ -70,7 +74,7 @@ export default class ServiceProvider {
 
   _instantiate(service) {
     const { config, value: Service, deps } = service
-    const desc = { name: service.name }
+    const desc = this._pickDesc(service)
     const objConfig = isFunction(config) ? config(this) : config
     if (deps) return deps(this, objConfig, desc)
     return service.klass ?
