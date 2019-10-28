@@ -1,7 +1,8 @@
-import { isFunction, isString, isClass, isConstructor } from './util'
+import { isFunction, isString, isConstructor } from './util'
 
 export default class ServiceCollection {
 
+  asyncs = []
   services = []
   names = {}
   strict = false
@@ -12,6 +13,14 @@ export default class ServiceCollection {
   }
 
   _push(service, desc, opt = {}) {
+    if (service.then) {
+      service = service.then(asyncService => {
+        this._push(asyncService, desc, opt)
+        return asyncService
+      })
+      this.asyncs.push(service)
+      return
+    }
     const name = desc.name = (desc.name || service.service || '').toLowerCase()
     if (!name) throw new Error('Service must have a name')
     const index = this.names[name]
@@ -49,7 +58,7 @@ export default class ServiceCollection {
       name = null
     }
     let desc = { name, deps }
-    if (!isFunction(service)) {
+    if (!isFunction(service) && !(service instanceof Promise)) {
       const Service = () => service
       desc.type = this.types.CONCRETE
       desc.typeof = typeof service
@@ -61,7 +70,6 @@ export default class ServiceCollection {
   }
 
   transient(service, name, deps) {
-    if (!isFunction(service)) throw new Error('Transient service must be a function or class')
     if (!isString(name)) {
       deps = name
       name = null
@@ -71,7 +79,6 @@ export default class ServiceCollection {
   }
 
   scoped(service, name, deps) {
-    if (!isFunction(service)) throw new Error('Scoped service must be a function or class')
     if (!isString(name)) {
       deps = name
       name = null

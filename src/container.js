@@ -35,9 +35,11 @@ export default class Container {
   }
 
   start() {
-    return Promise.all(this.invoke('start'))
+    return Promise.all(this.collection.asyncs)
+      .then(() => Promise.all(this.invoke('start')))
       .then(() => Promise.all(this.invoke('prepare')))
       .then(() => {
+        this.collection.asyncs = null
         this.isReady = true
         this.invoke('ready')
       })

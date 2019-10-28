@@ -131,4 +131,24 @@ describe('collection', () => {
     // And not the `NewService`
   })
 
+  it('async services', () => {
+    const container = new Container()
+    container.build(services => {
+      const ServiceA = new Promise(resolve => {
+        function Foo(provider) {
+          expect(provider).to.exist
+          return { hello: 'world' }
+        }
+        Foo.service = 'foo'
+        resolve(Foo)
+      })
+      services.add(ServiceA)
+    })
+    container.start().then(p => {
+      const foo = p.get('foo')
+      expect(foo).to.exist
+      expect(foo.hello).to.equal('world')
+    })
+  })
+
 })
