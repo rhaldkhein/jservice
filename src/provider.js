@@ -78,8 +78,8 @@ export default class ServiceProvider {
     const objConfig = isFunction(config) ? config(this) : config
     if (deps) return deps(this, objConfig, desc)
     return service.klass ?
-      new Service(this, objConfig, desc) :
-      Service(this, objConfig, desc)
+      (new Service(this, objConfig, desc)) :
+      (isFunction(Service) ? Service(this, objConfig, desc) : Service)
   }
 
 }
