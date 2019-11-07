@@ -4,12 +4,27 @@ import ServiceProvider from './provider'
 export default class Container {
 
   isReady = false
+  hooks = {}
 
   constructor(registry, parent) {
     this.parent = parent
     this.collection = new ServiceCollection(this)
     this.provider = new ServiceProvider(this.collection, parent && parent.provider)
     this.build(registry)
+  }
+
+  build(registry) {
+    if (typeof registry === 'function')
+      registry(this.collection)
+    return this
+  }
+
+  createContainer(registry) {
+    return new Container(registry, this)
+  }
+
+  createProvider() {
+    return new ServiceProvider(this.collection, this.provider)
   }
 
   init(proto, opt = {}) {
@@ -28,9 +43,29 @@ export default class Container {
     return setter.bind(this)
   }
 
-  build(registry) {
-    if (typeof registry === 'function')
-      registry(this.collection)
+  invoke(event) {
+    let results = []
+    const { services } = this.collection,
+      hook = this.hooks[event]
+    services.forEach(service => {
+      if (!service.enabled) return
+      const method = service.value[event]
+      if (method) results.push(method(
+        this.provider,
+        this.provider._pickDesc(service)
+      ))
+    })
+    if (hook) results.push(hook(this.provider))
+    return results
+  }
+
+  merge(container) {
+    this.collection.merge(container.collection)
+    return this
+  }
+
+  on(event, handler) {
+    this.hooks[event] = handler
     return this
   }
 
@@ -41,36 +76,9 @@ export default class Container {
       .then(() => {
         this.collection.asyncs = null
         this.isReady = true
-        this.invoke('ready')
+        return Promise.all(this.invoke('ready'))
       })
       .then(() => this.provider)
-  }
-
-  createContainer(registry) {
-    return new Container(registry, this)
-  }
-
-  createProvider() {
-    return new ServiceProvider(this.collection, this.provider)
-  }
-
-  invoke(event) {
-    let results = []
-    const { services } = this.collection
-    services.forEach(service => {
-      if (!service.enabled) return
-      const method = service.value[event]
-      if (method) results.push(method(
-        this.provider,
-        this.provider._pickDesc(service)
-      ))
-    })
-    return results
-  }
-
-  merge(container) {
-    this.collection.merge(container.collection)
-    return this
   }
 
   set strict(val) {
