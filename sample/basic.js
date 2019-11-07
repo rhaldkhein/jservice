@@ -7,6 +7,9 @@ const container = new JService()
 
 container
   .build(registry)
+  .on('start', () => console.log('start'))
+  .on('prepare', () => (console.log('prepare'), new Promise(resolve => setTimeout(resolve, 3000))))
+  .on('ready', () => (console.log('ready'), new Promise(resolve => setTimeout(resolve, 3000))))
   .start()
   .then(runTest)
 
