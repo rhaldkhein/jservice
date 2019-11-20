@@ -44,7 +44,8 @@ export default class ServiceCollection {
     desc.klass = isConstructor(service)
     desc.enabled = true
     // Run setup static method
-    if (isFunction(service.setup)) service.setup(this.container)
+    if (isFunction(service.setup))
+      service.setup(this.container, this.trimDesc(desc))
   }
 
   add(service, name, deps) {
@@ -116,6 +117,10 @@ export default class ServiceCollection {
         this._push(service.value, service)
       }
     }
+  }
+
+  trimDesc(service) {
+    return { name: service.name }
   }
 
 }

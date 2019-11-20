@@ -52,7 +52,7 @@ export default class Container {
       const method = service.value[event]
       if (method) results.push(method(
         this.provider,
-        this.provider._pickDesc(service)
+        this.collection.trimDesc(service)
       ))
     })
     if (hook) results.push(hook(this.provider))
