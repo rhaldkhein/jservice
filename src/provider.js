@@ -2,11 +2,15 @@ import { isFunction } from './util'
 
 export default class ServiceProvider {
 
+  _collection = null
+  _parent = null
+  _instances = null
+
   constructor(collection, parentProvider, instances) {
-    this._collection = collection
-    this._parent = parentProvider
-    // Pre-fill instances
-    this._instances = instances || {}
+    // The collection of services to resolve from
+    this.setCollection(collection)
+    // The parent also holds instances
+    this.setParent(parentProvider, instances)
   }
 
   create(instances) {
@@ -36,6 +40,15 @@ export default class ServiceProvider {
     return this._createService(name.toLowerCase())
   }
 
+  setCollection(collection) {
+    this._collection = collection
+  }
+
+  setParent(provider, instances = {}) {
+    this._parent = provider
+    this._instances = instances
+  }
+
   _createService(name) {
     // CONCRETE: 0
     // SINGLETON: 1
@@ -44,6 +57,7 @@ export default class ServiceProvider {
 
     let instance = this._instances[name]
     if (instance) return instance
+    // Resolve service from collection
     const service = this._collection.get(name)
     if (service === undefined || !service.enabled) return null
 

@@ -43,6 +43,34 @@ export default class Container {
     return setter.bind(this)
   }
 
+  merge(container) {
+    this.collection.merge(container.collection)
+    return this
+  }
+
+  on(event, handler) {
+    this.hooks[event] = handler
+    return this
+  }
+
+  setParent(container) {
+    this.parent = container
+    this.provider.setParent(container.provider)
+    this.invoke('mount').then(() => container.invoke('attach'))
+  }
+
+  start() {
+    return Promise.all(this.collection.asyncs)
+      .then(() => this.invoke('start'))
+      .then(() => this.invoke('prepare'))
+      .then(() => {
+        this.collection.asyncs = null
+        this.isReady = true
+        return this.invoke('ready')
+      })
+      .then(() => this.provider)
+  }
+
   invoke(event) {
     let results = []
     const { services } = this.collection,
@@ -56,29 +84,7 @@ export default class Container {
       ))
     })
     if (hook) results.push(hook(this.provider))
-    return results
-  }
-
-  merge(container) {
-    this.collection.merge(container.collection)
-    return this
-  }
-
-  on(event, handler) {
-    this.hooks[event] = handler
-    return this
-  }
-
-  start() {
-    return Promise.all(this.collection.asyncs)
-      .then(() => Promise.all(this.invoke('start')))
-      .then(() => Promise.all(this.invoke('prepare')))
-      .then(() => {
-        this.collection.asyncs = null
-        this.isReady = true
-        return Promise.all(this.invoke('ready'))
-      })
-      .then(() => this.provider)
+    return Promise.all(results)
   }
 
   set strict(val) {

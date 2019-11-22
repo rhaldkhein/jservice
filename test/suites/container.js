@@ -137,4 +137,31 @@ describe('container', () => {
     container.start()
   })
 
+  it('deep lazy parent container', (done) => {
+    // 1st level 
+    const containerA = create(services => {
+      services.singleton(SingletonService)
+    })
+    // 2nd level
+    const containerB = create(services => {
+      services.transient(FooService)
+    })
+    // 3rd level
+    const containerC = create()
+
+    setImmediate(() => {
+      // Link all containers
+      containerB.setParent(containerA)
+      containerC.setParent(containerB)
+
+      const { provider } = containerC
+      const sing = provider.get('singleton')
+      const foo = provider.get('foo')
+      expect(sing).to.be.instanceOf(SingletonService)
+      expect(foo).to.be.exist
+      done()
+    }, 300)
+
+  })
+
 })
