@@ -60,6 +60,7 @@ export default class Container {
   }
 
   start() {
+    if (this.isReady) return Promise.resolve(this.provider)
     return Promise.all(this.collection.asyncs)
       .then(() => this.invoke('start'))
       .then(() => this.invoke('prepare'))
