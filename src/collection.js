@@ -2,13 +2,14 @@ import { isFunction, isString, isConstructor } from './util'
 
 export default class ServiceCollection {
 
+  container = null
   asyncs = []
   services = []
   names = {}
   strict = false
 
   constructor(container) {
-    if (!container.parent) this.singleton(container, 'core')
+    this.singleton(container, 'core')
     this.container = container
   }
 
@@ -91,6 +92,7 @@ export default class ServiceCollection {
   get(name) {
     let service = this.services[this.names[name]],
       { parent } = this.container
+    // If parent exist, get from there instead
     if (!service && parent) service = parent.collection.get(name)
     return service
   }
