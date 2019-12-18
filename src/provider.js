@@ -6,11 +6,15 @@ export default class ServiceProvider {
   _parent = null
   _instances = null
 
-  constructor(collection, parentProvider, instances) {
+  constructor(collection, parentProvider, instances = {}) {
     // The collection of services to resolve from
     this.setCollection(collection)
     // The parent also holds instances
     this.setParent(parentProvider, instances)
+  }
+
+  clear() {
+    this._instances = {}
   }
 
   create(instances) {
@@ -44,9 +48,9 @@ export default class ServiceProvider {
     this._collection = collection
   }
 
-  setParent(provider, instances = {}) {
+  setParent(provider, instances) {
     this._parent = provider
-    this._instances = instances
+    if (instances) this._instances = instances
   }
 
   _createService(name) {
